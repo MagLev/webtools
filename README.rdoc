@@ -1,7 +1,7 @@
 = WebTools Example
 
 The WebTools Sinatra application running in MagLev allows you to explore a
-MagLev Ruby application's Classes, Modules, Methods, Constants, and Ancestors 
+MagLev Ruby application's Classes, Modules, Methods, Constants, and Ancestors
 in a web browser.
 
 It will also allow you to explore GemStone/S Smalltalk code, and to examine
@@ -9,11 +9,17 @@ detailed statistics about all processes connected to GemStone/S.
 
 === Setup
 
-1. Download and install MagLev using instructions at https://github.com/MagLev/maglev/blob/master/README.rdoc
+1. Download and install MagLev using instructions at
+   https://github.com/MagLev/maglev/blob/master/README.rdoc
+
 2. Start the MagLev server
+    $ cd $MAGLEV_HOME
     $ maglev start
+
 3. Install necessary gems:
-    $ bundle install
+    $ cd <to this directory>
+    $ $MAGLEV_HOME/bin/bundle install
+
     ### Temporary workaround for https://magtrac.gemstone.com/ticket/879 ###
     $ maglev-gem pristine rack
 
@@ -66,7 +72,7 @@ new instance methods age and age=.
 
 Click on "Refresh View" in WebTools. Note that AAADemo now appears in the
 class list. Click on the class AAADemo and compare it with the source
-(demo_data.rb). 
+(demo_data.rb).
 
 == Viewing GemStone/S code, processes and statistics
 
@@ -89,7 +95,7 @@ a slow network, this may cause data to not appear in the bottom pane.
 The line number displayed for evals is always 2. This will be fixed at a later date.
 
 == Contributing
- 
+
 * Fork the project from https://github.com/MagLev/webtools
 * Start a feature or topic branch
 * Commit and push until you are happy with your contribution
