@@ -2,7 +2,7 @@
 #
 # Name:     demo_data.rb
 #
-# Purpose:  Define a persistent class with public, private and protected 
+# Purpose:  Define a persistent class with public, private and protected
 #           instance methods, a class method, and some data we can explore
 #           using WebTools. Name it AAADemo so it will appear at the top
 #           of the Class list.
