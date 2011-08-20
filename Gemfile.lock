@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/MagLev/json.git
+  revision: b49f3ff1372fc9a943c50999f55597ebf94fc3cc
+  specs:
+    json (1.5.4)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -8,7 +14,6 @@ GEM
     activesupport (3.0.5)
     builder (2.1.2)
     i18n (0.5.0)
-    json_pure (1.5.1)
     rack (1.2.2)
     sinatra (1.2.1)
       rack (~> 1.1)
@@ -20,5 +25,5 @@ PLATFORMS
 
 DEPENDENCIES
   activemodel (~> 3.0)
-  json_pure (= 1.5.1)
-  sinatra (~> 1.1)
+  json!
+  sinatra (~> 1.2.0)
