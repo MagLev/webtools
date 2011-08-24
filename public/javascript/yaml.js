@@ -35,6 +35,7 @@ var YAML =
     var errors = [],
         reference_blocks = [],
         processing_time = 0,
+        arrayMarker = "!array!", // Use an invalid key for marking the Array object
         regex =
         {
             "regLevel" : new RegExp("^([\\s\\-]+)"),
@@ -47,7 +48,7 @@ var YAML =
             "map" : new RegExp("\\{\\s*(.*)\\s*\\}"),
             "key_value" : new RegExp("([a-z0-9_-][ a-z0-9_-]*):( .+)", "i"),
             "single_key_value" : new RegExp("^([a-z0-9_-][ a-z0-9_-]*):( .+?)$", "i"),
-            "key" : new RegExp("([a-z0-9_-][ a-z0-9_-]+):( .+)?", "i"),
+            "key" : new RegExp("((?:" + arrayMarker + ")|(?:(?:- :)?[a-z0-9_-][ a-z0-9_-]+)):( .+)?", "i"),
             "item" : new RegExp("^-\\s+"),
             "trim" : new RegExp("^\\s+|\\s+$"),
             "comment" : new RegExp("([^\\\'\\\"#]+([\\\'\\\"][^\\\'\\\"]*[\\\'\\\"])*)*(#.*)?")
@@ -131,6 +132,7 @@ var YAML =
         
         var result = new Block(-1);
         var currentBlock = new Block(0);
+        var oldBlock;
         result.addChild(currentBlock);
         var levels = [];
         var line = "";
@@ -149,9 +151,16 @@ var YAML =
                 level = m[1].length;
             } else
                 level = 0;
-            
+            }
+
+            if (oldBlock === undefined) {
+                if (level != 0) { // Dealing with a top-level Array, mark virtual outer block
+                    currentBlock.lines.push(arrayMarker + ":");
+                }
+            }
+
             if(level > curLevel) {
-                var oldBlock = currentBlock;
+                oldBlock = currentBlock;
                 currentBlock = new Block(level);
                 oldBlock.addChild(currentBlock);
                 blocks.push(currentBlock);
@@ -357,7 +366,11 @@ var YAML =
                         currentObj = {};
                         isMap = true;
                     }
-                    
+
+                    if(key[0] == ":") { // Symbols don't exist in JS
+                        key = key.slice(1)
+                    }
+
                     if(typeof m[2] != "undefined") {
                         var value = m[2].replace(regex["trim"], "");
                         if(value[0] == '&') {
@@ -433,6 +446,12 @@ var YAML =
         
         for(var j = processedBlocks.length - 1; j >= 0; --j) {
             blocks.splice.call(blocks, processedBlocks[j], 1);
+        }
+
+        if (processedBlocks.length == 1 && processedBlocks[0] == 0) {
+            if (res[arrayMarker] !== undefined) { // Found marker in top-level, return array
+                return res[arrayMarker]
+            }
         }
 
         return res;
