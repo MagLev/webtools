@@ -364,7 +364,6 @@ var YAML =
                         }
                         if(currentObj != null) res.push(currentObj);
                         currentObj = {};
-                        isMap = true;
                     }
 
                     if(key[0] == ":") { // Symbols don't exist in JS
