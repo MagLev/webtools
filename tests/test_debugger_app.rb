@@ -33,20 +33,11 @@ class DebuggerAppTest < MiniTest::Unit::TestCase
 
   def process
     if @process.nil?
-      @process = Thread.start do
-        begin
-          thread_foo()
-        rescue Exception => e
-          if Thread.current[:reraise]
-            raise e
-          else
-            Thread.stop
-          end
-        end
+      res = Maglev::Debugger.debug do
+        thread_foo()
       end
       Thread.pass
-      # FIXME: This next call is too involved
-      Maglev::Debugger::Process.new(@process).pop_exception_handling_frames
+      @process = res[:result].thread
     end
     @process
   end
@@ -267,12 +258,10 @@ class DebuggerAppTest < MiniTest::Unit::TestCase
   end
 
   def test_raise_exception_on_continued_failure
-    skip
     assert process.stop?
     process.__trim_stack_to_level(2) # before the raise
-    assert_raises(Exception, "thread_foo") {
-      put "/process/#{process.object_id}"
-    }
+    put "/process/#{process.object_id}"
+    assert_equal 500, last_response.status
     process = nil
   end
 end
