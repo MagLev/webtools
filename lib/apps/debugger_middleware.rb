@@ -1,86 +1,88 @@
 require 'maglev/debugger'
 
-class Webtools::DebuggerMiddleware
-  attr_reader :production_mode
+module WebTools
+  class DebuggerMiddleware
+    attr_reader :production_mode
 
-  def initialize(app, *args)
-    @app = app
-    self.production_mode = true if args.include?(:production)
-    self.production_mode ||= false if args.include?(:development)
-    self.production_mode ||= (ENV["RACK_ENV"] == :production)
-  end
-
-  def production_mode=(bool)
-    @production_mode = bool
-    if bool
-      @debugger = self
-    else
-      require File.expand_path('../debugger_app', __FILE__)
-      @debugger = InProcessDebugger.new(@app)
-    end
-  end
-
-  def call(env)
-    dup._call(env)
-  end
-
-  def _call(env)
-    @debugger.wrap_call(env) do
-      Maglev::Debugger.debug(production_mode) { @app.call(env) }
-    end
-  end
-
-  def wrap_call(env)
-    yield
-  end
-
-  class InProcessDebugger
-    def initialize(app)
+    def initialize(app, *args)
       @app = app
-      @debugger_app = Webtools::DebuggerApp.new
-      load_template
+      self.production_mode = true if args.include?(:production)
+      self.production_mode ||= false if args.include?(:development)
+      self.production_mode ||= (ENV["RACK_ENV"] == :production)
     end
 
-    def load_template
-      file = File.expand_path(__FILE__)
-      _, @template = ::IO.read(file).gsub("\r\n", "\n").split(/^__END__$/, 2)
-      ERB.new(@template).def_method(self.class, 'render_template(title, path)')
+    def production_mode=(bool)
+      @production_mode = bool
+      if bool
+        @debugger = self
+      else
+        require File.expand_path('../debugger_app', __FILE__)
+        @debugger = InProcessDebugger.new(@app)
+      end
     end
 
-    def debugger_active?
-      defined?(@@debugger_active) && !!@@debugger_active
+    def call(env)
+      dup._call(env)
+    end
+
+    def _call(env)
+      @debugger.wrap_call(env) do
+        Maglev::Debugger.debug(production_mode) { @app.call(env) }
+      end
     end
 
     def wrap_call(env)
-      if debugger_active?
-        response = @debugger_app.call(env)
-        response[1]['Access-Control-Allow-Origin'] = "*"
-        response
-      else
-        application_call(env, yield)
-      end
+      yield
     end
 
-    def application_call(env, result)
-      if result.is_a? Maglev::Debugger::Process
-        raise result.exception if result[:skip_debugger]
-        result[:skip_debugger] = false
-        @@debugged_path = env["PATH_INFO"]
-        @@debugged_process = result.thread.object_id
-        @@debugger_active = true
-        @@debugged_exception = result.exception.message
-        [500, {"Content-Type" => "text/html"}, info_message(env)]
-      else
-        result
+    class InProcessDebugger
+      def initialize(app)
+        @app = app
+        @debugger_app = WebTools::DebuggerApp.new
+        load_template
       end
-    end
 
-    def info_message(env)
-      [render_template(@@debugged_exception,
-                       env['rack.url_scheme'].to_s + "://" +
-                       env['HTTP_HOST'].to_s +
-                       env['SCRIPT_NAME'].to_s + "/process/" +
-                       @@debugged_process.to_s)]
+      def load_template
+        file = File.expand_path(__FILE__)
+        _, @template = ::IO.read(file).gsub("\r\n", "\n").split(/^__END__$/, 2)
+        ERB.new(@template).def_method(self.class, 'render_template(title, path)')
+      end
+
+      def debugger_active?
+        defined?(@@debugger_active) && !!@@debugger_active
+      end
+
+      def wrap_call(env)
+        if debugger_active?
+          response = @debugger_app.call(env)
+          response[1]['Access-Control-Allow-Origin'] = "*"
+          response
+        else
+          application_call(env, yield)
+        end
+      end
+
+      def application_call(env, result)
+        if result.is_a? Maglev::Debugger::Process
+          raise result.exception if result[:skip_debugger]
+          result[:skip_debugger] = false
+          @@debugged_path = env["PATH_INFO"]
+          @@debugged_process = result.thread.object_id
+          @@debugger_active = true
+          @@debugged_exception = result.exception.message
+          [500, {"Content-Type" => "text/html"}, info_message(env)]
+        else
+          result
+        end
+      end
+
+      def info_message(env)
+        [render_template(@@debugged_exception,
+                         env['rack.url_scheme'].to_s + "://" +
+                         env['HTTP_HOST'].to_s +
+                         env['SCRIPT_NAME'].to_s + "/process/" +
+                         @@debugged_process.to_s)]
+      end
     end
   end
 end
