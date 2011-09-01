@@ -1,10 +1,10 @@
 require 'sinatra/base'
 require 'json'
 
-require 'webtools'
-require 'webtools/support/smalltalk_extensions'
-require 'webtools/support/appmodel'
-require 'webtools/support/code_browser'
+require 'web_tools'
+require 'web_tools/support/smalltalk_extensions'
+require 'web_tools/support/app_model'
+require 'web_tools/support/code_browser'
 
 class WebTools::Browser < Sinatra::Base
   enable :sessions

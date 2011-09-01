@@ -1,4 +1,4 @@
-require 'webtools'
+require 'web_tools'
 require 'maglev/debugger'
 
 module WebTools::Middleware

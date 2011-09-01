@@ -1,4 +1,4 @@
-require 'webtools/ruby'
+require 'web_tools/ruby'
 require 'json'
 
 module WebTools
@@ -64,7 +64,7 @@ module WebTools
     end
 
     attr_reader :info
-    
+
     def initialize(obj)
       @info = { }
       @info[:object_id]          = obj.object_id

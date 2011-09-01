@@ -1,5 +1,5 @@
 
-require 'webtools/code_browser'
+require 'web_tools/code_browser'
 
 # This module emulates all of the API from the Smalltalk side of things
 module WebTools

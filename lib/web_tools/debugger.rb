@@ -1,4 +1,4 @@
-require 'webtools'
+require 'web_tools'
 require 'sinatra'
 require 'json/pure'
 require 'rack/contrib/jsonp'
