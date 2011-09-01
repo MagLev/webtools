@@ -1,12 +1,12 @@
-$LOAD_PATH.unshift(File.expand_path("../../lib", __FILE__))
 ENV["RACK_ENV"] = "test"
 require 'minitest/autorun'
 require 'rack/test'
-require 'web_tools/debugger'
+require 'web_tools'
 require 'mocha'
 
 class DebuggerTest < MiniTest::Unit::TestCase
   include Rack::Test::Methods
+  WebTools::Debugger
 
   def app
     WebTools::Debugger

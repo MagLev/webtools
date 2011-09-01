@@ -1,5 +1,6 @@
-require 'webtools_app'
+require 'web_tools'
 
-WebToolsApp.set :root, File.dirname(__FILE__)
+WebTools::Browser.set :root, File.dirname(__FILE__)
 
-run WebToolsApp
+run WebTools::Browser
+
