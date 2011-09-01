@@ -1,7 +1,8 @@
+require 'webtools'
 require 'maglev/debugger'
 
-module WebTools
-  class DebuggerMiddleware
+module WebTools::Middleware
+  class Debugger
     attr_reader :production_mode
 
     def initialize(app, *args)
@@ -16,7 +17,6 @@ module WebTools
       if bool
         @debugger = self
       else
-        require File.expand_path('../debugger_app', __FILE__)
         @debugger = InProcessDebugger.new(@app)
       end
     end
@@ -38,7 +38,7 @@ module WebTools
     class InProcessDebugger
       def initialize(app)
         @app = app
-        @debugger_app = WebTools::DebuggerApp.new
+        @debugger_app = WebTools::Debugger.new
         load_template
       end
 

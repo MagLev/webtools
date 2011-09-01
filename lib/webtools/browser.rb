@@ -1,8 +1,12 @@
 require 'sinatra/base'
-require 'webtools'
 require 'json'
 
-class WebToolsApp < Sinatra::Base
+require 'webtools'
+require 'webtools/support/smalltalk_extensions'
+require 'webtools/support/appmodel'
+require 'webtools/support/code_browser'
+
+class WebTools::Browser < Sinatra::Base
   enable :sessions
   set :show_exceptions, true
   set :raise_errors, false
@@ -88,3 +92,4 @@ class WebToolsApp < Sinatra::Base
     { '_stack' => excep.backtrace.join("<br>") }.to_json
   end
 end
+

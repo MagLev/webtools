@@ -1,4 +1,8 @@
-# Support to emulate the Smalltalk code in $MAGLEV_HOME/gemstone/examples/www
-require 'webtools/smalltalk_extensions'
-require 'webtools/appmodel'
-require 'webtools/code_browser'
+module WebTools
+  module Support; end
+  module Middleware; end
+
+  path = File.expand_path("..", __FILE__)
+  autoload :Browser, File.join(path, "browser.rb")
+  autoload :Debugger, File.join(path, "debugger.rb")
+end

@@ -1,10 +1,11 @@
+require 'webtools'
 require 'sinatra'
-require 'maglev/debugger'
 require 'json/pure'
 require 'rack/contrib/jsonp'
+require 'maglev/debugger'
 
 module WebTools
-  class DebuggerApp < Sinatra::Base
+  class Debugger < Sinatra::Base
     enable :sessions
     use Rack::JSONP
 
