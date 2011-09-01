@@ -111,6 +111,7 @@ maglevInfo = (function() {
   function getJSON(url, data, callback) {
     var startTime = new Date().getTime();
     var statusBar = $('#statusBar');
+    url = window.WebTools.location + url
     $(statusBar).text('Sent request #' + (++requestCount) + ' for ' + url);
     $.getJSON(url, data, success);
     return;

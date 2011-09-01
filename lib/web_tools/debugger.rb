@@ -1,12 +1,13 @@
-require 'web_tools'
 require 'sinatra'
 require 'json/pure'
 require 'rack/contrib/jsonp'
 require 'maglev/debugger'
+require 'web_tools'
+require 'web_tools/support/service_helper'
 
 module WebTools
   class Debugger < Sinatra::Base
-    enable :sessions
+    include WebTools::Support::ServiceHelper
     use Rack::JSONP
 
     def respond_json(obj)
