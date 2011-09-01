@@ -18,7 +18,7 @@ task :smalltalk do
   raise "Can't find #{file}" unless File.exists? file
   cd(MH) { sh "rake maglev:input_file[#{file}]" }
 
-  sh "maglev-ruby -d lib/webtools/smalltalk_tools.rb"
+  sh "maglev-ruby -d lib/web_tools/support/smalltalk_tools.rb"
 end
 
 task :test do
