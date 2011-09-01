@@ -1,5 +1,5 @@
 require 'minitest/unit'
-require 'webtools/code_browser'
+require 'web_tools/support/code_browser'
 
 MiniTest::Unit.autorun
 

@@ -1,4 +1,4 @@
-require 'web_tools/ruby'
+require 'web_tools/support/ruby'
 require 'json'
 
 module WebTools

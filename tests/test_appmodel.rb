@@ -1,5 +1,5 @@
 require 'minitest/unit'
-require 'webtools/appmodel'
+require 'web_tools/support/app_model'
 
 MiniTest::Unit.autorun
 

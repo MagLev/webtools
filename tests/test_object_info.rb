@@ -1,5 +1,5 @@
 require 'minitest/unit'
-require 'webtools/code_browser'
+require 'web_tools/support/code_browser'
 
 MiniTest::Unit.autorun
 
@@ -52,7 +52,7 @@ module WebTools
       assert_equal 23, info[:enumerated_size]
       assert_equal [":foo", "1", "\"twelve\"", "0", "1", "2", "3", "4", "5", "6", "7", "..."],
                    info[:enumerated]
-      
+
     end
   end
 end
