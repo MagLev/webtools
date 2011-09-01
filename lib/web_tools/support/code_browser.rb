@@ -1,5 +1,5 @@
 require 'web_tools/support/ruby'
-require 'json'
+require 'json/pure'
 
 module WebTools
   # The CodeBrowser is a ViewModel for MagLev code browsing.  It keeps the

@@ -1,5 +1,5 @@
 require 'sinatra/base'
-require 'json'
+require 'json/pure'
 
 require 'web_tools'
 require 'web_tools/support/smalltalk_extensions'
