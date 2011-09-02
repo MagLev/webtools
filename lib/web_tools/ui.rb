@@ -19,6 +19,10 @@ class WebTools::UI < Sinatra::Base
     @stylesheets = %w[reset.css webtools.css]
   end
 
+  get '/' do
+    erb :index
+  end
+
   get '/browser' do
     @javascripts += %w[webtools/browser.js CodeMirror/js/codemirror.js]
     erb :browser
@@ -61,7 +65,6 @@ class WebTools::UI < Sinatra::Base
     end
 
     @javascripts = @javascripts.map do |path|
-      p path
       unless path =~ /^((http)|\/)/
         "#{@location}/javascript/#{path}"
       else
