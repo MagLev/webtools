@@ -16,6 +16,29 @@ Frame = (function() {
     this.frame_idx = frame_idx;
     this.container = container;
   }
+  Frame.prototype.update_detail_view = function(objectInfo) {
+    this.inspector.hide();
+    $('#objInfoClass').text(objectInfo['(__class__)']);
+    $('#objInfoValue').text(objectInfo['(__self__)']);
+    this.renderTableData('#objInstVars', objectInfo, function(idx, data) {
+      return $("<tr><td>" + idx + "</td><td>" + data + "</td></tr>");
+    });
+    return this.inspector.show();
+  };
+  Frame.prototype.renderTableData = function(tableId, object, formatFn) {
+    var ui;
+    ui = $(tableId + ' tbody');
+    ui.empty();
+    return $.each(object, function(idx, data) {
+      return ui.append(formatFn(idx, data));
+    });
+  };
+  Frame.prototype.create_detail_view = function() {
+    this.inspector = $('#objectInspector');
+    this.inspector.remove();
+    this.container.append(this.inspector);
+    return this.inspector.removeClass('hidden');
+  };
   Frame.prototype.create_source_code_holder = function() {
     this.source = $(document.createElement("script"));
     this.source.attr({
@@ -72,6 +95,7 @@ Frame = (function() {
       }
       return $.get(url, __bind(function(object) {
         this.create_inspector(object, index + 1, url);
+        this.update_detail_view(object);
         return SyntaxHighlighter.highlight();
       }, this), 'json');
     }, this));
@@ -102,7 +126,8 @@ Frame = (function() {
             "do-it": this.evaluator.val()
           }
         }, __bind(function(object) {
-          return this.evaluator.val("" + (this.evaluator.val()) + " => " + object['(__self__)']);
+          this.evaluator.val("" + (this.evaluator.val()) + " => " + object['(__self__)']);
+          return this.evaluator.select();
         }, this), 'json');
       }
     }, this));
@@ -114,7 +139,8 @@ Frame = (function() {
     return $.get("" + this.server + "/process/" + this.pid + "/frames/" + this.frame_idx, __bind(function(frame) {
       this.source.html("<![CDATA[\n" + frame.debug_info.source + "\n]]>");
       SyntaxHighlighter.highlight();
-      return this.create_inspector(frame.debug_info.context);
+      this.create_inspector(frame.debug_info.context);
+      return this.create_detail_view();
     }, this), 'json');
   };
   return Frame;
@@ -178,9 +204,8 @@ Process = (function() {
   return Process;
 })();
 Debugger = (function() {
-  function Debugger(server, process_id) {
+  function Debugger(server) {
     this.server = server;
-    this.process_id = process_id;
     this.tab_content_template = $("#tab_content_template");
   }
   Debugger.prototype.toString = function() {
@@ -204,14 +229,9 @@ Debugger = (function() {
     process_box = this.content.children("select[name='process-select-box']");
     $.getJSON("" + this.server + "/process", function(errors) {
       return $(errors).each(function(idx, e) {
-        return process_box.append("<option value='" + e.process_id + "'>" + (escapeHTML(e.label)) + "</option>");
+        return process_box.append("<option value='" + e.process_id + "'>" + e.process_id + ": " + (escapeHTML(e.label)) + "</option>");
       });
     });
-    if ((this.process_id != null) && this.process_id !== "") {
-      $.getJSON("" + this.server + "/process/" + this.process_id, function(p) {
-        return process_box.append("<option value='" + p.process_id + "'>" + (escapeHTML(p.label)) + "</option>");
-      });
-    }
     return process_box.bind("change", __bind(function() {
       this.process = new Process(this.server, process_box.val(), this.tab);
       return this.process.render();
@@ -233,10 +253,9 @@ Debugger = (function() {
 })();
 DebuggerApp = {
   setup: function() {
-    var add_tab, debuggers, dialog, form, tab_counter, tab_process_input, tab_server_input, tabs;
+    var add_tab, debuggers, dialog, form, tab_counter, tab_server_input, tabs;
     debuggers = [];
     tab_server_input = $("#tab_server");
-    tab_process_input = $("#tab_process");
     tab_counter = 2;
     add_tab = function() {
       var tab_server;
@@ -248,7 +267,7 @@ DebuggerApp = {
       tabTemplate: '<li><a href=\'#{href}\'>#{label}</a>' + "<span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
       add: function(event, ui) {
         var new_debugger;
-        new_debugger = new Debugger(tab_server_input.val(), tab_process_input.val());
+        new_debugger = new Debugger(tab_server_input.val());
         debuggers.push(new_debugger);
         return new_debugger.content_for($(ui.panel));
       }

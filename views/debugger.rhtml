@@ -7,10 +7,6 @@
           <label for="tab_server">Server</label><br/>
           <input type="text" name="tab_server" id="tab_server" value="http://localhost:4567"
                  class="ui-widget-content ui-corner-all" />
-          <br/>
-          <label for="tab_process">Process ID (optional)</label><br/>
-          <input type="text" name="tab_process" id="tab_process" value="141264897"
-                 class="ui-widget-content ui-corner-all" />
         </fieldset>
       </form>
     </div>
@@ -38,5 +34,23 @@
       <div class="info-bar"></div>
       <div class="frame-list"></div>
     </div>
+  </div>
+  <div id="objectInspector" class="hidden">
+    <table id="objInfo" class="objTable">
+      <caption>Object Info</caption>
+      <tbody>
+        <tr><th>Class</th><td id="objInfoClass"></td></tr>
+        <tr><th>Object ID</th><td id="objInfoId"></td></tr>
+        <tr><th>Value</th><td id="objInfoValue"></td></tr>
+      </tbody>
+    </table>
+    <table id="objInstVars" class="objTable">
+      <caption>Instance Variables</caption>
+      <tbody></tbody>
+    </table>
+    <table id="objEnumValues" class="objTable">
+      <caption>Enumerated Values</caption>
+      <tbody></tbody>
+    </table>
   </div>
 </div>

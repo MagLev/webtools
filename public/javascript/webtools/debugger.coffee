@@ -6,6 +6,26 @@ window.escapeHTML = (str) ->
 class Frame
   constructor: (@server, @pid, @frame_idx, @container) ->
 
+  update_detail_view: (objectInfo) ->
+    @inspector.hide()
+    $('#objInfoClass').text(objectInfo['(__class__)'])
+    $('#objInfoValue').text(objectInfo['(__self__)'])
+    this.renderTableData '#objInstVars', objectInfo, (idx, data) ->
+      $("<tr><td>#{idx}</td><td>#{data}</td></tr>")
+    @inspector.show()
+
+  renderTableData: (tableId, object, formatFn) ->
+    ui = $(tableId + ' tbody')
+    ui.empty()
+    $.each object, (idx, data) ->
+      ui.append(formatFn(idx, data))
+
+  create_detail_view: ->
+    @inspector = $('#objectInspector')
+    @inspector.remove()
+    @container.append(@inspector)
+    @inspector.removeClass('hidden')
+
   create_source_code_holder: () ->
     @source = $(document.createElement("script"))
     @source.attr
@@ -46,6 +66,7 @@ class Frame
         i.html("")
       $.get url, (object) =>
         this.create_inspector(object, index + 1, url)
+        this.update_detail_view(object)
         SyntaxHighlighter.highlight()
       , 'json'
 
@@ -68,6 +89,7 @@ class Frame
             "do-it": @evaluator.val()
         , (object) =>
           @evaluator.val("#{@evaluator.val()} => #{object['(__self__)']}")
+          @evaluator.select()
         , 'json'
 
   render: ->
@@ -78,6 +100,7 @@ class Frame
       @source.html("<![CDATA[\n#{frame.debug_info.source}\n]]>")
       SyntaxHighlighter.highlight()
       this.create_inspector(frame.debug_info.context)
+      this.create_detail_view()
     , 'json'
 
 class Process
@@ -124,7 +147,7 @@ class Process
     , 'json'
 
 class Debugger
-  constructor: (@server, @process_id) ->
+  constructor: (@server) ->
     @tab_content_template = $("#tab_content_template")
 
   toString: ->
@@ -145,10 +168,7 @@ class Debugger
     process_box = @content.children("select[name='process-select-box']")
     $.getJSON "#{@server}/process", (errors) ->
       $(errors).each (idx, e) ->
-        process_box.append("<option value='#{e.process_id}'>#{escapeHTML(e.label)}</option>")
-    if @process_id? && @process_id != ""
-      $.getJSON "#{@server}/process/#{@process_id}", (p) ->
-        process_box.append("<option value='#{p.process_id}'>#{escapeHTML(p.label)}</option>")
+        process_box.append("<option value='#{e.process_id}'>#{e.process_id}: #{escapeHTML(e.label)}</option>")
     process_box.bind "change", =>
       @process = new Process(@server, process_box.val(), @tab)
       @process.render()
@@ -166,7 +186,6 @@ DebuggerApp =
   setup: ->
     debuggers = []
     tab_server_input = $("#tab_server")
-    tab_process_input = $("#tab_process")
     tab_counter = 2
 
     # actual addTab function: adds new tab using the title input
@@ -182,7 +201,7 @@ DebuggerApp =
       tabTemplate: '<li><a href=\'#{href}\'>#{label}</a>' +
         "<span class='ui-icon ui-icon-close'>Remove Tab</span></li>"
       add: (event, ui) ->
-        new_debugger = new Debugger(tab_server_input.val(), tab_process_input.val())
+        new_debugger = new Debugger(tab_server_input.val())
         debuggers.push(new_debugger)
         new_debugger.content_for($(ui.panel))
 
