@@ -67,7 +67,7 @@ class Frame
           data:
             "do-it": @evaluator.val()
         , (object) =>
-          @evaluator.val("#{@evaluator.val} => #{object.object}")
+          @evaluator.val("#{@evaluator.val()} => #{object['(__self__)']}")
         , 'json'
 
   render: ->
@@ -132,7 +132,7 @@ class Debugger
 
   server_alive: () ->
     request = $.ajax
-      url: "#{@server}/errors"
+      url: "#{@server}/process"
       async: false
     request.status == 200
 
@@ -143,14 +143,12 @@ class Debugger
 
   fill_process_selector: () ->
     process_box = @content.children("select[name='process-select-box']")
-    $.get "#{@server}/errors", (errors) ->
-      $(errors).each (e) ->
+    $.getJSON "#{@server}/process", (errors) ->
+      $(errors).each (idx, e) ->
         process_box.append("<option value='#{e.process_id}'>#{escapeHTML(e.label)}</option>")
-    , 'json'
-    if @process_id?
-      $.get "#{@server}/process/#{@process_id}", (p) ->
+    if @process_id? && @process_id != ""
+      $.getJSON "#{@server}/process/#{@process_id}", (p) ->
         process_box.append("<option value='#{p.process_id}'>#{escapeHTML(p.label)}</option>")
-      , 'json'
     process_box.bind "change", =>
       @process = new Process(@server, process_box.val(), @tab)
       @process.render()
