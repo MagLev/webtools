@@ -125,11 +125,11 @@ module WebTools
     end
 
     post "/process/:oop/frames/:idx" do
-      respond_json frame.context_eval(request.POST["do-it"])
+      respond_json frame.context_eval(params["data"]["do-it"] || "self")
     end
 
     post "/process/:oop/frames/:idx/objects/*" do
-      respond_json objects[:"(__self__)"].instance_eval(request.POST["do-it"])
+      respond_json objects[:"(__self__)"].instance_eval(params["data"]["do-it"] || "self")
     end
   end
 end
