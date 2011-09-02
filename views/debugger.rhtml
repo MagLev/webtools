@@ -1,0 +1,42 @@
+<div id="rubyCodeBrowser" class="ui-widget-content">
+  <div id="toolBar">
+    <div id="dialog" title="Enter debugger service Url">
+      <form action="post">
+        <fieldset class="ui-helper-reset">
+          <legend>Start a new debugging session in a tab</legend>>
+          <label for="tab_server">Server</label><br/>
+          <input type="text" name="tab_server" id="tab_server" value="http://localhost:4567"
+                 class="ui-widget-content ui-corner-all" />
+          <br/>
+          <label for="tab_process">Process ID (optional)</label><br/>
+          <input type="text" name="tab_process" id="tab_process" value="141264897"
+                 class="ui-widget-content ui-corner-all" />
+        </fieldset>
+      </form>
+    </div>
+
+    <button id="add_tab">Start Session</button>
+    <button id="clone_tab">Clone Session</button>
+  </div>
+  <div id="mainContent">
+    <div id="tabs">
+      <ul>
+        <li><a href="#tabs-1">Help</a></li>
+      </ul>
+      <div id="tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+        <p>
+          <em>This is the MagLev WebTools Debugger</em>
+          Click on "Start Session" to open connect to a debugging session.
+        </p>
+      </div>
+    </div>
+    <div id="tab_content_template" style="display:none">
+      <label for="process-select-box">Available Processes</label>
+      <select name="process-select-box">
+        <option value="">---</option>
+      </select>
+      <div class="info-bar"></div>
+      <div class="frame-list"></div>
+    </div>
+  </div>
+</div>
