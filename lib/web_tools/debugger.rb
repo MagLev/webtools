@@ -1,9 +1,8 @@
 require 'sinatra'
-require 'json/pure'
-require 'rack/contrib/jsonp'
-require 'maglev/debugger'
 require 'web_tools'
 require 'web_tools/support/service_helper'
+require 'rack/contrib/jsonp'
+require 'maglev/debugger'
 
 module WebTools
   class Debugger < Sinatra::Base

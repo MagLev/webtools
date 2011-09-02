@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 It is not part of the default dependencies, so the gem doesn't have to pull in too many dependencies for deployment installations (i.e. recording information about your production system for later analysis).
 "
 
-  s.add_dependency 'json', '~> 1.5'
+  s.add_dependency 'json_pure', '~> 1.5'
   s.add_dependency 'rack', '~> 1.1'
   s.add_dependency 'rack-contrib', '~> 1.1'
   s.add_development_dependency 'sinatra', '~> 1.2.0'

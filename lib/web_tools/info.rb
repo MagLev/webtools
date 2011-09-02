@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'json/pure'
 require 'web_tools'
 require 'web_tools/support/app_model'
 require 'web_tools/support/service_helper'

@@ -1,3 +1,5 @@
+require 'json/pure' unless defined? JSON
+
 module WebTools::Support::ServiceHelper
   def self.included(base)
     base.set :show_exceptions, true

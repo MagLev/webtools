@@ -1,9 +1,5 @@
 require 'sinatra/base'
-require 'json/pure'
-
 require 'web_tools'
-require 'web_tools/support/smalltalk_extensions'
-require 'web_tools/support/app_model'
 
 class WebTools::UI < Sinatra::Base
   use WebTools::Browser
