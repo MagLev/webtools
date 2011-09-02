@@ -124,11 +124,14 @@ module WebTools
     end
 
     post "/process/:oop/frames/:idx" do
-      respond_json frame.context_eval(params["data"]["do-it"] || "self")
+      content_type :json
+      frame.context_eval(params["data"]["do-it"] || "self").inspect.to_json
     end
 
     post "/process/:oop/frames/:idx/objects/*" do
-      respond_json objects[:"(__self__)"].instance_eval(params["data"]["do-it"] || "self")
+      content_type :json
+      objects[:"(__self__)"].instance_eval(params["data"]["do-it"] || "self").
+        inspect.to_json
     end
   end
 end
