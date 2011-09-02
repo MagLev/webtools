@@ -12,20 +12,25 @@ class WebTools::UI < Sinatra::Base
 
   before do
     @location = env["SCRIPT_NAME"]
+    @scripts = []
   end
 
   get '/browser' do
-    @scripts = %w[webtools/browser CodeMirror/js/codemirror]
+    @scripts += %w[webtools/browser CodeMirror/js/codemirror]
     erb :browser
   end
 
-  get '/version' do
-    @scripts = %w[webtools/version]
+  get '/debugger' do
+    "todo"
+  end
+
+  get '/info/version' do
+    @scripts += %w[webtools/version]
     erb :version
   end
 
-  get '/sessions' do
-    @scripts = %w[webtools/sessions]
+  get '/info/sessions' do
+    @scripts += %w[webtools/sessions]
     erb :sessions
   end
 end

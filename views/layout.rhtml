@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <link rel="Shortcut Icon" type="image/ico" href="images/favicon.ico">
 
-    <link rel="stylesheet" href="stylesheets/reset.css"     type="text/css" media="screen">
-    <link rel="stylesheet" href="stylesheets/webtools.css"  type="text/css" media="screen">
+    <link rel="stylesheet" href="<%= @location %>/stylesheets/reset.css"     type="text/css" media="screen">
+    <link rel="stylesheet" href="<%= @location %>/stylesheets/webtools.css"  type="text/css" media="screen">
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
@@ -15,7 +15,7 @@
       window.WebTools.location = "<%= @location %>";
     </script>
     <% @scripts.each do |path| %>
-      <script type="text/javascript" src="javascript/<%= path %>.js"></script>
+      <script type="text/javascript" src="<%= @location %>/javascript/<%= path %>.js"></script>
     <% end %>
   </head>
   <body>
