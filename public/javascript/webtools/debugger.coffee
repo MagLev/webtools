@@ -89,6 +89,7 @@ class Frame
             "do-it": @evaluator.val()
         , (object) =>
           @evaluator.val("#{@evaluator.val()} => #{object['(__self__)']}")
+          this.update_detail_view(object)
           @evaluator.select()
         , 'json'
 

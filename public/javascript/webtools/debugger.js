@@ -127,6 +127,7 @@ Frame = (function() {
           }
         }, __bind(function(object) {
           this.evaluator.val("" + (this.evaluator.val()) + " => " + object['(__self__)']);
+          this.update_detail_view(object);
           return this.evaluator.select();
         }, this), 'json');
       }

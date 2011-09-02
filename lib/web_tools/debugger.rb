@@ -54,7 +54,7 @@ module WebTools
         hash[var.to_sym] = object.instance_variable_get(var)
         hash
       end
-      hash[:"(__self__)"] = object
+      hash[:"(__self__)"] = object.inspect
       hash[:"(__class__)"] = object.class
       hash
     end
@@ -124,14 +124,11 @@ module WebTools
     end
 
     post "/process/:oop/frames/:idx" do
-      content_type :json
-      frame.context_eval(params["data"]["do-it"] || "self").inspect.to_json
+      respond_json frame.context_eval(params["data"]["do-it"] || "self")
     end
 
     post "/process/:oop/frames/:idx/objects/*" do
-      content_type :json
-      objects[:"(__self__)"].instance_eval(params["data"]["do-it"] || "self").
-        inspect.to_json
+      respond_json objects[:"(__self__)"].instance_eval(params["data"]["do-it"] || "self")
     end
   end
 end
