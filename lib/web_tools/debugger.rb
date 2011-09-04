@@ -108,10 +108,10 @@ module WebTools
       respond_json frame.delete
     end
 
-    put "/process/:oop" do
+    post "/process/:oop" do
       p = process
       if p.is_a? Maglev::Debugger::ObjectLogError or !p.thread.alive?
-        return status 404
+        return 404
       end
       p.thread.wakeup
       p.thread.join
@@ -123,12 +123,24 @@ module WebTools
       end
     end
 
-    post "/process/:oop/frames/:idx" do
-      respond_json frame.context_eval(params["data"]["do-it"] || "self")
+    put "/process/:oop/frames/:idx" do
+      respond_json frame.context_eval(params["do-it"] || "self")
+      200
     end
 
-    post "/process/:oop/frames/:idx/objects/*" do
-      respond_json objects[:"(__self__)"].instance_eval(params["data"]["do-it"] || "self")
+    put "/process/:oop/frames/:idx/objects/*" do
+      respond_json objects[:"(__self__)"].instance_eval(params["do-it"] || "self")
+      200
+    end
+
+    # XXX: Remove me, please
+    options '*' do
+      [200,
+       { 'Access-Control-Allow-Origin' => '*',
+         'Access-Control-Allow-Methods' => 'PUT, POST, GET, DELETE, OPTIONS',
+         'Access-Control-Max-Age' => '1000',
+         'Access-Control-Allow-Headers' => '*' },
+       [""]]
     end
   end
 end
