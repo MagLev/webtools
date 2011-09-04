@@ -49,7 +49,8 @@ module WebTools::Middleware
       end
 
       def debugger_active?
-        defined?(@@debugger_active) && !!@@debugger_active
+        defined?(@@debugger_active) && !!@@debugger_active &&
+          defined?(@@debugged_process) && @@debugged_process.alive?
       end
 
       def wrap_call(env)
@@ -67,7 +68,7 @@ module WebTools::Middleware
           raise result.exception if result[:skip_debugger]
           result[:skip_debugger] = false
           @@debugged_path = env["PATH_INFO"]
-          @@debugged_process = result.thread.object_id
+          @@debugged_process = result.thread
           @@debugger_active = true
           @@debugged_exception = result.exception.message
           [500, {"Content-Type" => "text/html"}, info_message(env)]
@@ -81,7 +82,7 @@ module WebTools::Middleware
                          env['rack.url_scheme'].to_s + "://" +
                          env['HTTP_HOST'].to_s +
                          env['SCRIPT_NAME'].to_s + "/process/" +
-                         @@debugged_process.to_s)]
+                         @@debugged_process.object_id.to_s)]
       end
     end
   end
