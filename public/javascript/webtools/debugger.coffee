@@ -8,23 +8,23 @@ class Frame
 
   update_detail_view: (objectInfo) ->
     @inspector.hide()
-    $('#objInfoClass').text(objectInfo['(__class__)'])
-    $('#objInfoValue').text(objectInfo['(__self__)'])
-    this.renderTableData '#objInstVars', objectInfo, (idx, data) ->
+    @inspector.children('.objInfoClass').text(objectInfo['(__class__)'])
+    @inspector.children('.objInfoValue').text(objectInfo['(__self__)'])
+    this.renderTableData @inspector.children('.objInstVars'), objectInfo, (idx, data) ->
       $("<tr><td>#{idx}</td><td>#{data}</td></tr>")
     @inspector.show()
 
-  renderTableData: (tableId, object, formatFn) ->
-    ui = $(tableId + ' tbody')
+  renderTableData: (instVarsTable, object, formatFn) ->
+    ui = instVarsTable.children('tbody')
     ui.empty()
     $.each object, (idx, data) ->
       ui.append(formatFn(idx, data))
 
   create_detail_view: ->
-    @inspector = $('#objectInspector')
-    @inspector.remove()
-    @container.append(@inspector)
+    @inspector = $('#objectInspector').clone()
+    @inspector.removeAttr('id')
     @inspector.removeClass('hidden')
+    @container.append(@inspector)
 
   create_source_code_holder: () ->
     @source = $(document.createElement("script"))
@@ -84,20 +84,23 @@ class Frame
       code = e.keyCode if e.keyCode?
       code = e.which unless code
       if code == 13 # RETURN
-        $.post path,
+        $.ajax
+          url: path
           data:
             "do-it": @evaluator.val()
-        , (object) =>
-          @evaluator.val("#{@evaluator.val()} => #{object['(__self__)']}")
-          this.update_detail_view(object)
-          @evaluator.select()
-        , 'json'
+          success: (object) =>
+            @evaluator.val("#{@evaluator.val()} => #{object['(__self__)']}")
+            this.update_detail_view(object)
+            @evaluator.select()
+          dataType: 'json'
+          type: 'PUT'
 
   render: ->
     @container.html("")
     @inspectors = []
     this.create_source_code_holder()
     $.get "#{@server}/process/#{@pid}/frames/#{@frame_idx}", (frame) =>
+      src = frame.debug_info.source
       @source.html("<![CDATA[\n#{frame.debug_info.source}\n]]>")
       SyntaxHighlighter.highlight()
       this.create_inspector(frame.debug_info.context)
@@ -129,7 +132,16 @@ class Process
           data_idx: idx
         link.text("#{f.class}##{f.method_name}")
         link.append("<small>#{escapeHTML(f.source_location)}</small>")
-        header.html(link)
+        header.append(link)
+        restartLink = $('<a href="#">Restart frame</a>')
+        restartLink.bind "click", (e) =>
+          $.ajax
+            url: "#{@server}/process/#{@pid}/frames/#{idx}",
+            type: 'DELETE'
+            success: =>
+
+          e.preventDefault()
+        header.append(restartLink)
         div = document.createElement("div")
         $(div).text("Waiting for data...")
         @stack_div.append(header)
@@ -166,12 +178,12 @@ class Debugger
     @content.removeAttr("id")
 
   fill_process_selector: () ->
-    process_box = @content.children("select[name='process-select-box']")
+    @process_box = @content.children("select[name='process-select-box']")
     $.getJSON "#{@server}/process", (errors) ->
       $(errors).each (idx, e) ->
-        process_box.append("<option value='#{e.process_id}'>#{e.process_id}: #{escapeHTML(e.label)}</option>")
-    process_box.bind "change", =>
-      @process = new Process(@server, process_box.val(), @tab)
+        @process_box.append("<option value='#{e.process_id}'>#{e.process_id}: #{escapeHTML(e.label)}</option>")
+    @process_box.bind "change", =>
+      @process = new Process(@server, @process_box.val(), @tab)
       @process.render()
 
   content_for: (ui_panel) ->

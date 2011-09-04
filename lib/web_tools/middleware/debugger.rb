@@ -104,9 +104,9 @@ __END__
   <a href="<%= path %>"><%= path %></a>
   <br>
   Once you're done debugging, you can click
-  <form style="display:inline" name="resumeForm" method="PUT" action="<%= path %>">
+  <form style="display:inline" name="resumeForm" method="POST" action="<%= path %>">
     <input type="hidden" name="resume" VALUE="">
-    <a href="#" onClick="document.resumeForm.submit();return false">here</a>
+    <a href="#" onClick="document.resumeForm.submit(); return false">here</a>
   </form>
   to resume the original process.
 </body>

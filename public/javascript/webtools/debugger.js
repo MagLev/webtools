@@ -9,7 +9,7 @@ window.escapeHTML = function(str) {
   }
   return $("<i></i>").text(str).html();
 };
-Frame = (function() {
+Frame = function() {
   function Frame(server, pid, frame_idx, container) {
     this.server = server;
     this.pid = pid;
@@ -18,26 +18,26 @@ Frame = (function() {
   }
   Frame.prototype.update_detail_view = function(objectInfo) {
     this.inspector.hide();
-    $('#objInfoClass').text(objectInfo['(__class__)']);
-    $('#objInfoValue').text(objectInfo['(__self__)']);
-    this.renderTableData('#objInstVars', objectInfo, function(idx, data) {
+    this.inspector.children('.objInfoClass').text(objectInfo['(__class__)']);
+    this.inspector.children('.objInfoValue').text(objectInfo['(__self__)']);
+    this.renderTableData(this.inspector.children('.objInstVars'), objectInfo, function(idx, data) {
       return $("<tr><td>" + idx + "</td><td>" + data + "</td></tr>");
     });
     return this.inspector.show();
   };
-  Frame.prototype.renderTableData = function(tableId, object, formatFn) {
+  Frame.prototype.renderTableData = function(instVarsTable, object, formatFn) {
     var ui;
-    ui = $(tableId + ' tbody');
+    ui = instVarsTable.children('tbody');
     ui.empty();
     return $.each(object, function(idx, data) {
       return ui.append(formatFn(idx, data));
     });
   };
   Frame.prototype.create_detail_view = function() {
-    this.inspector = $('#objectInspector');
-    this.inspector.remove();
-    this.container.append(this.inspector);
-    return this.inspector.removeClass('hidden');
+    this.inspector = $('#objectInspector').clone();
+    this.inspector.removeAttr('id');
+    this.inspector.removeClass('hidden');
+    return this.container.append(this.inspector);
   };
   Frame.prototype.create_source_code_holder = function() {
     this.source = $(document.createElement("script"));
@@ -60,8 +60,10 @@ Frame = (function() {
     $.each(object, function(key, value) {
       if (("" + key) === "object") {
         return options.push("" + value);
-      } else if (("" + key) !== "__proto__") {
-        return options.push("" + key);
+      } else {
+        if (("" + key) !== "__proto__") {
+          return options.push("" + key);
+        }
       }
     });
     if (!(this.inspector_div != null)) {
@@ -121,15 +123,19 @@ Frame = (function() {
         code = e.which;
       }
       if (code === 13) {
-        return $.post(path, {
+        return $.ajax({
+          url: path,
           data: {
             "do-it": this.evaluator.val()
-          }
-        }, __bind(function(object) {
-          this.evaluator.val("" + (this.evaluator.val()) + " => " + object['(__self__)']);
-          this.update_detail_view(object);
-          return this.evaluator.select();
-        }, this), 'json');
+          },
+          success: __bind(function(object) {
+            this.evaluator.val("" + (this.evaluator.val()) + " => " + object['(__self__)']);
+            this.update_detail_view(object);
+            return this.evaluator.select();
+          }, this),
+          dataType: 'json',
+          type: 'PUT'
+        });
       }
     }, this));
   };
@@ -145,8 +151,8 @@ Frame = (function() {
     }, this), 'json');
   };
   return Frame;
-})();
-Process = (function() {
+}();
+Process = function() {
   function Process(server, pid, tab) {
     this.server = server;
     this.pid = pid;
@@ -169,7 +175,7 @@ Process = (function() {
     this.stack_div.html("");
     return request = $.get("" + this.server + "/process/" + this.pid + "/frames", __bind(function(framelist) {
       $(framelist).each(__bind(function(idx, f) {
-        var div, header, link;
+        var div, header, link, restartLink;
         header = $(document.createElement("h3"));
         link = $(document.createElement("a"));
         link.attr({
@@ -178,7 +184,16 @@ Process = (function() {
         });
         link.text("" + f["class"] + "#" + f.method_name);
         link.append("<small>" + (escapeHTML(f.source_location)) + "</small>");
-        header.html(link);
+        header.append(link);
+        restartLink = $('<a href="#">Restart frame</a>');
+        restartLink.bind("click", __bind(function(e) {
+          $.ajax({
+            url: "" + this.server + "/process/" + this.pid + "/frames/" + idx,
+            type: 'DELETE'
+          });
+          return e.preventDefault();
+        }, this));
+        header.append(restartLink);
         div = document.createElement("div");
         $(div).text("Waiting for data...");
         this.stack_div.append(header);
@@ -203,8 +218,8 @@ Process = (function() {
     }, this), 'json');
   };
   return Process;
-})();
-Debugger = (function() {
+}();
+Debugger = function() {
   function Debugger(server) {
     this.server = server;
     this.tab_content_template = $("#tab_content_template");
@@ -251,7 +266,7 @@ Debugger = (function() {
     return this.content;
   };
   return Debugger;
-})();
+}();
 DebuggerApp = {
   setup: function() {
     var add_tab, debuggers, dialog, form, tab_counter, tab_server_input, tabs;
