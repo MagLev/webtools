@@ -61,7 +61,8 @@ module WebTools
         hash[var.to_sym] = object.instance_variable_get(var)
         hash
       end
-      hash[:"(__self__)"] = object.inspect
+      hash[:"(__self__)"] = object
+      hash[:"(__inspect__)"] = object.inspect
       hash[:"(__class__)"] = object.class
       hash
     end
