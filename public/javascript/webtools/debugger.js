@@ -19,7 +19,7 @@ Frame = function() {
   Frame.prototype.update_detail_view = function(objectInfo) {
     this.inspector.hide();
     this.inspector.children('.objInfoClass').text(objectInfo['(__class__)']);
-    this.inspector.children('.objInfoValue').text(objectInfo['(__self__)']);
+    this.inspector.children('.objInfoValue').text(objectInfo['(__inspect__)']);
     this.renderTableData(this.inspector.children('.objInstVars'), objectInfo, function(idx, data) {
       return $("<tr><td>" + idx + "</td><td>" + data + "</td></tr>");
     });
@@ -29,8 +29,10 @@ Frame = function() {
     var ui;
     ui = instVarsTable.children('tbody');
     ui.empty();
-    return $.each(object, function(idx, data) {
-      return ui.append(formatFn(idx, data));
+    return $.each(object, function(key, value) {
+      if (key.indexOf("@") === 0) {
+        return ui.append(formatFn(key, value));
+      }
     });
   };
   Frame.prototype.create_detail_view = function() {
@@ -40,13 +42,8 @@ Frame = function() {
     return this.container.append(this.inspector);
   };
   Frame.prototype.create_source_code_holder = function() {
-    this.source = $(document.createElement("script"));
-    this.source.attr({
-      type: "syntaxhighlighter",
-      "class": "brush: ruby"
-    });
-    this.container.prepend(this.source);
-    return this.source;
+    this.container.prepend($('#editor'));
+    return $('#editor').show();
   };
   Frame.prototype.create_inspector = function(object, index, path) {
     var inspector, options;
@@ -58,12 +55,8 @@ Frame = function() {
     }
     options = $([]);
     $.each(object, function(key, value) {
-      if (("" + key) === "object") {
-        return options.push("" + value);
-      } else {
-        if (("" + key) !== "__proto__") {
-          return options.push("" + key);
-        }
+      if (("" + key).indexOf("@") === 0 || key === "(__self__)" || key === "(__class__)") {
+        return options.push("" + key);
       }
     });
     if (!(this.inspector_div != null)) {
@@ -95,10 +88,9 @@ Frame = function() {
         i = _ref[_i];
         i.html("");
       }
-      return $.get(url, __bind(function(object) {
+      return $.get("" + url + "/objects", __bind(function(object) {
         this.create_inspector(object, index + 1, url);
-        this.update_detail_view(object);
-        return SyntaxHighlighter.highlight();
+        return this.update_detail_view(object);
       }, this), 'json');
     }, this));
   };
@@ -128,9 +120,11 @@ Frame = function() {
           data: {
             "do-it": this.evaluator.val()
           },
-          success: __bind(function(object) {
-            this.evaluator.val("" + (this.evaluator.val()) + " => " + object['(__self__)']);
-            this.update_detail_view(object);
+          success: __bind(function(data) {
+            var result;
+            result = data["do-it-result"];
+            this.evaluator.val("" + (this.evaluator.val()) + " => " + result['(__inspect__)']);
+            this.update_detail_view(result);
             return this.evaluator.select();
           }, this),
           dataType: 'json',
@@ -144,8 +138,7 @@ Frame = function() {
     this.inspectors = [];
     this.create_source_code_holder();
     return $.get("" + this.server + "/process/" + this.pid + "/frames/" + this.frame_idx, __bind(function(frame) {
-      this.source.html("<![CDATA[\n" + frame.debug_info.source + "\n]]>");
-      SyntaxHighlighter.highlight();
+      editor.getSession().setValue(frame.debug_info.source);
       this.create_inspector(frame.debug_info.context);
       return this.create_detail_view();
     }, this), 'json');
@@ -189,7 +182,10 @@ Process = function() {
         restartLink.bind("click", __bind(function(e) {
           $.ajax({
             url: "" + this.server + "/process/" + this.pid + "/frames/" + idx,
-            type: 'DELETE'
+            type: 'DELETE',
+            success: __bind(function() {
+              return this.render_stack();
+            }, this)
           });
           return e.preventDefault();
         }, this));
@@ -241,15 +237,14 @@ Debugger = function() {
     return this.content.removeAttr("id");
   };
   Debugger.prototype.fill_process_selector = function() {
-    var process_box;
-    process_box = this.content.children("select[name='process-select-box']");
-    $.getJSON("" + this.server + "/process", function(errors) {
-      return $(errors).each(function(idx, e) {
-        return process_box.append("<option value='" + e.process_id + "'>" + e.process_id + ": " + (escapeHTML(e.label)) + "</option>");
-      });
-    });
-    return process_box.bind("change", __bind(function() {
-      this.process = new Process(this.server, process_box.val(), this.tab);
+    this.process_box = this.content.children("select[name='process-select-box']");
+    $.getJSON("" + this.server + "/process", __bind(function(errors) {
+      return $(errors).each(__bind(function(idx, e) {
+        return this.process_box.append("<option value='" + e.process_id + "'>" + e.process_id + ": " + (escapeHTML(e.label)) + "</option>");
+      }, this));
+    }, this));
+    return this.process_box.bind("change", __bind(function() {
+      this.process = new Process(this.server, this.process_box.val(), this.tab);
       return this.process.render();
     }, this));
   };
@@ -323,5 +318,21 @@ DebuggerApp = {
   }
 };
 $(document).ready(function() {
-  return DebuggerApp.setup();
+  DebuggerApp.setup();
+  window.RubyMode = require("ace/mode/ruby").Mode;
+  window.canon = require('pilot/canon');
+  window.editor = ace.edit('editor');
+  window.editor.getSession().setUseSoftTabs(true);
+  window.editor.getSession().setMode(new RubyMode());
+  return canon.addCommand({
+    name: "save",
+    bindKey: {
+      win: "Ctrl-S",
+      mac: "Command-S",
+      sender: "editor"
+    },
+    exec: function() {
+      debugger;
+    }
+  });
 });
