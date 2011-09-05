@@ -36,9 +36,7 @@ class Frame
     path = "#{@server}/process/#{@pid}/frames/#{@frame_idx}" unless path?
     options = $([])
     $.each object, (key, value) ->
-      if "#{key}" == "object"
-        options.push("#{value}")
-      else unless "#{key}" == "__proto__"
+      if "#{key}".indexOf("@") == 0 || key == "(__self__)" || key == "(__class__)"
         options.push("#{key}")
     if not @inspector_div?
       @inspector_div = $(document.createElement("div"))
