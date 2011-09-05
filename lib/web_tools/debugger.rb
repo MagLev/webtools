@@ -101,7 +101,7 @@ module WebTools
     end
 
     get "/process/:oop/frames/:idx/objects/*" do
-      if params[:splat]
+      if params[:splat].first.end_with? "objects"
         respond_json objects
       else
         respond_json objects[:"(__self__)"]
