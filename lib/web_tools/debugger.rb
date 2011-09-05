@@ -23,7 +23,7 @@ module WebTools
                    when Array, Hash
                      obj
                    else
-                     instance_variables_for(obj)
+                     details_for(obj)
                    end
                  end
                end
@@ -44,12 +44,16 @@ module WebTools
       variable_list = params[:splat].first.split("/objects/")
       variable_list.each do |name|
         name = name[0...(-"/objects".size)] if name.end_with? "/objects"
-        ctxt = instance_variables_for(ctxt[name.to_sym])
+        ctxt = details_for(ctxt[name.to_sym])
       end
       ctxt
     end
 
-    def instance_variables_for(object)
+    def object
+      objects[:"(__self__)"]
+    end
+
+    def details_for(object)
       hash = object.instance_variables.inject({}) do |hash, var|
         hash[var.to_sym] = object.instance_variable_get(var)
         hash
@@ -129,8 +133,21 @@ module WebTools
     end
 
     put "/process/:oop/frames/:idx/objects/*" do
-      respond_json objects[:"(__self__)"].instance_eval(params["do-it"] || "self")
-      200
+      return 404 if params[:splat].first.end_with? "objects"
+
+      current_object = {"self" => object}
+      if doIt = params["do-it"]
+        begin
+          result = current_object.instance_eval(doIt)
+        rescue Exception => e
+          result = e
+        end
+        current_object["do-it"] = doIt
+        current_object["do-it-result"] = details_for(result)
+        respond_json current_object
+      else
+        404
+      end
     end
 
     # XXX: Remove me, please
