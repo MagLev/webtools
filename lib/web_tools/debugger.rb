@@ -153,10 +153,18 @@ module WebTools
         current_frame[:"do-it"] = doIt
         current_frame[:"do-it-result"] = details_for(result)
         respond_json current_frame
+      elsif params["index"] == "1" and params[:idx] == "0"
+        until frame.method_name != current_frame[:method_name]
+          frame.step(:into) # Step into until we find the next ruby frame
+        end
+        respond_json frame
       elsif di = params["debug_info"]
         if di["stepOffset"] != current_frame[:debug_info][:stepOffset]
-          status 404 # TODO: Not implemented
-          respond_json current_frame
+          return 404 unless params[:idx] == 0
+          while di["stepOffset"].to_i > frame[:debug_info][:stepOffset].to_i
+            frame.step(:over)
+          end
+          respond_json frame
         elsif di["source"] != current_frame[:debug_info][:source]
           klass = current_frame[:defining_class]
           frame_above = process.frames[process.frames.index(frame) + 1]

@@ -254,10 +254,60 @@ class DebuggerTest < MiniTest::Unit::TestCase
   end
 
   def test_eval_in_frame
+    skip
     put "/process/#{process.object_id}/frames/1", {"do-it" => "some"}
     assert_equal "context", json["do-it-result"]["self"]
     assert_equal "context".inspect, json["do-it-result"]["inspect"]
     assert_equal "String", json["do-it-result"]["class"]
+  end
+
+  def test_step_into_frame
+    skip
+    assert process.stop?
+    assert process.alive?
+    into = Maglev::Debugger::Frame.new(:method => process.__method_at(1),
+                                       :thread => process,
+                                       :index => 1)
+    above = Maglev::Debugger::Frame.new(:method => process.__method_at(2),
+                                        :thread => process,
+                                        :index => 2)
+    above.delete # Pop before that
+    put("/process/#{process.object_id}/frames/0", "index" => 1)
+    new_top = Maglev::Debugger::Frame.new(:method => process.__method_at(1),
+                                          :thread => process,
+                                          :index => 1)
+    assert_equal into.method_name, new_top.method_name
+    @process = nil
+  end
+
+  def test_step_in_frame
+    skip
+    assert process.stop?
+    assert process.alive?
+    above = Maglev::Debugger::Frame.new(:method => process.__method_at(2),
+                                        :thread => process,
+                                        :index => 2)
+    prev_name = above.method_name
+    above.delete # Pop before that
+    above = Maglev::Debugger::Frame.new(:method => process.__method_at(1),
+                                        :thread => process,
+                                        :index => 1)
+    assert_equal 1, above.debug_info![:stepOffset]
+
+    put("/process/#{process.object_id}/frames/0",
+        "debug_info" => { "stepOffset" => 2 })
+
+    above = Maglev::Debugger::Frame.new(:method => process.__method_at(1),
+                                        :thread => process,
+                                        :index => 1)
+    assert_equal prev_name, above.method_name
+    assert_equal 2, above.debug_info![:stepOffset]
+
+    @process = nil
+  end
+
+  def test_change_source_code
+    skip
   end
 
   def test_instance_eval_on_object
