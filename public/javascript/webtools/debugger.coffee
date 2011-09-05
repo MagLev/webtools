@@ -59,10 +59,9 @@ class Frame
       url = "#{path}/objects/#{value}"
       for i in @inspectors.slice(index + 1)
         i.html("")
-      $.get url, (object) =>
+      $.get "#{url}/objects", (object) =>
         this.create_inspector(object, index + 1, url)
         this.update_detail_view(object)
-        SyntaxHighlighter.highlight()
       , 'json'
 
   create_evaluator: (path) ->
