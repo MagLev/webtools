@@ -82,9 +82,10 @@ class Frame
           url: path
           data:
             "do-it": @evaluator.val()
-          success: (object) =>
-            @evaluator.val("#{@evaluator.val()} => #{object['(__self__)']}")
-            this.update_detail_view(object)
+          success: (data) =>
+            result = data["do-it-result"]
+            @evaluator.val("#{@evaluator.val()} => #{result['(__inspect__)']}")
+            this.update_detail_view(result)
             @evaluator.select()
           dataType: 'json'
           type: 'PUT'
