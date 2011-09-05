@@ -172,8 +172,8 @@ class Debugger
 
   fill_process_selector: () ->
     @process_box = @content.children("select[name='process-select-box']")
-    $.getJSON "#{@server}/process", (errors) ->
-      $(errors).each (idx, e) ->
+    $.getJSON "#{@server}/process", (errors) =>
+      $(errors).each (idx, e) =>
         @process_box.append("<option value='#{e.process_id}'>#{e.process_id}: #{escapeHTML(e.label)}</option>")
     @process_box.bind "change", =>
       @process = new Process(@server, @process_box.val(), @tab)
