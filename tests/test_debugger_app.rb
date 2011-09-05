@@ -220,7 +220,7 @@ class DebuggerTest < MiniTest::Unit::TestCase
 
   def test_post_cannot_restart_errors
     DebuggerLogEntry.create_continuation_labeled("non-restartable")
-    post "/process/#{ObjectLog.errors.last.object_id}"
+    post "/process/#{ObjectLog.errors.last.object_id}", {"running" => "true"}
     assert_equal 404, last_response.status
   end
 
@@ -228,7 +228,7 @@ class DebuggerTest < MiniTest::Unit::TestCase
     assert process.alive?
     process.exit
     refute process.alive?
-    post "/process/#{process.object_id}"
+    post "/process/#{process.object_id}", {"running" => "true"}
     assert_equal 404, last_response.status
     @process = nil
   end
@@ -238,7 +238,7 @@ class DebuggerTest < MiniTest::Unit::TestCase
     assert process.alive?
     process.__trim_stack_to_level(2) # Pop the raise, so resume will put us before that
     process[:skip_test_exception] = true # Skip throwing
-    post "/process/#{process.object_id}"
+    post "/process/#{process.object_id}", {"running" => "true"}
     refute process.alive?
     assert process.stop?
   end
@@ -248,7 +248,7 @@ class DebuggerTest < MiniTest::Unit::TestCase
     assert process.alive?
     process.__trim_stack_to_level(2) # Pop the raise, so resume will put us before that
     process[:skip_test_exception] = true # Skip throwing
-    post "/process/#{process.object_id}"
+    post "/process/#{process.object_id}", {"running" => "true"}
     assert_equal process[:result].last.join, last_response.body
     @process = nil
   end
@@ -272,8 +272,8 @@ class DebuggerTest < MiniTest::Unit::TestCase
   def test_raise_exception_on_continued_failure
     assert process.stop?
     process.__trim_stack_to_level(2) # before the raise
-    post "/process/#{process.object_id}"
+    post "/process/#{process.object_id}", "running" => "true"
     assert_equal 500, last_response.status
-    process = nil
+    @process = nil
   end
 end

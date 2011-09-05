@@ -126,16 +126,18 @@ module WebTools
 
     post "/process/:oop" do
       p = process
-      if p.is_a? Maglev::Debugger::ObjectLogError or !p.thread.alive?
-        return 404
-      end
-      p.thread.wakeup
-      p.thread.join
-      if (result = p.thread[:result]).is_a? Maglev::Debugger::Process
-        p.thread.kill
-        raise result.exception
+      return 404 if p.is_a? Maglev::Debugger::ObjectLogError
+      if params["running"] == "true" and p.thread.alive? and p.thread.stop?
+        p.thread.wakeup
+        p.thread.join
+        if (result = p.thread[:result]).is_a? Maglev::Debugger::Process
+          p.thread.kill
+          raise result.exception
+        else
+          result
+        end
       else
-        result
+        404
       end
     end
 
