@@ -27,12 +27,8 @@ class Frame
     @container.append(@inspector)
 
   create_source_code_holder: () ->
-    @source = $(document.createElement("script"))
-    @source.attr
-      type: "syntaxhighlighter",
-      class: "brush: ruby"
-    @container.prepend(@source)
-    @source
+    @container.prepend($('#editor'))
+    $('#editor').show()
 
   create_inspector: (object, index, path) ->
     index = 0 unless index?
@@ -100,9 +96,7 @@ class Frame
     @inspectors = []
     this.create_source_code_holder()
     $.get "#{@server}/process/#{@pid}/frames/#{@frame_idx}", (frame) =>
-      src = frame.debug_info.source
-      @source.html("<![CDATA[\n#{frame.debug_info.source}\n]]>")
-      SyntaxHighlighter.highlight()
+      editor.getSession().setValue(frame.debug_info.source)
       this.create_inspector(frame.debug_info.context)
       this.create_detail_view()
     , 'json'
@@ -252,3 +246,17 @@ DebuggerApp =
 
 $(document).ready ->
   DebuggerApp.setup()
+  window.RubyMode = require("ace/mode/ruby").Mode
+  window.canon = require('pilot/canon')
+  window.editor = ace.edit('editor')
+  window.editor.getSession().setUseSoftTabs(true)
+  window.editor.getSession().setMode(new RubyMode())
+  canon.addCommand
+    name: "save",
+    bindKey:
+      win: "Ctrl-S",
+      mac: "Command-S",
+      sender: "editor"
+    exec: ->
+      debugger
+

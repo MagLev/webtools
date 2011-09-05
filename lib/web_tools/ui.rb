@@ -25,14 +25,9 @@ class WebTools::UI < Sinatra::Base
   end
 
   get '/debugger' do
-    @stylesheets += %w[
-      http://alexgorbatchev.com/pub/sh/current/styles/shCore.css
-      http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css
-      stylesheets/webtools-debugger.css]
     @javascripts += %w[
-      https://raw.github.com/alexgorbatchev/SyntaxHighlighter/master/scripts/XRegExp.js
-      https://raw.github.com/alexgorbatchev/SyntaxHighlighter/master/scripts/shCore.js
-      http://alexgorbatchev.com/pub/sh/current/scripts/shBrushRuby.js
+      ace/ace.js
+      ace/mode-ruby.js
       webtools/debugger.js]
     erb :debugger
   end
