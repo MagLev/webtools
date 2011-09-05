@@ -35,8 +35,11 @@ module WebTools
     end
 
     def frame
-      l = params.has_key?("all") ? process.frames : process.ruby_frames
-      l[params[:idx].to_i].tap {|o| o.debug_info! }
+      f = (params.has_key?("all") ?
+           process.frames :
+           process.ruby_frames)[params[:idx].to_i]
+      f.debug_info!
+      f
     end
 
     def objects
