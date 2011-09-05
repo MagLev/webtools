@@ -104,7 +104,9 @@ module WebTools
       if params[:splat].first.end_with? "objects"
         respond_json objects
       else
-        respond_json objects[:"(__self__)"]
+        respond_json("self" => object,
+                     "do-it" => nil,
+                     "do-it-result" => nil)
       end
     end
 
