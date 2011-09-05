@@ -3,6 +3,7 @@ require 'web_tools'
 require 'web_tools/support/service_helper'
 require 'rack/contrib/jsonp'
 require 'maglev/debugger'
+require 'maglev/method_source'
 
 module WebTools
   class Debugger < Sinatra::Base
@@ -134,8 +135,30 @@ module WebTools
     end
 
     put "/process/:oop/frames/:idx" do
-      respond_json frame.context_eval(params["do-it"] || "self")
-      200
+      current_frame = frame.to_hash
+      # TODO: Really check the posted document
+      if doIt = params["do-it"]
+        begin
+          result = frame.context_eval(doIt)
+        rescue Exception => e
+          result = e
+        end
+        current_frame[:"do-it"] = doIt
+        current_frame[:"do-it-result"] = details_for(result)
+        respond_json current_frame
+      elsif di = params["debug_info"]
+        if di["stepOffset"]
+          status 404 # TODO: Not implemented
+          respond_json current_frame
+        elsif di["source"]
+          current_frame[:defining_class].set_method_source(current_frame[:method_name],
+                                                           di["source"])
+          respond_json frame # Retreive the frame again, to show the updated source
+        end
+      else
+        status 404
+        respond_json frame
+      end
     end
 
     put "/process/:oop/frames/:idx/objects/*" do
