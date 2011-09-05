@@ -17,8 +17,9 @@ class Frame
   renderTableData: (instVarsTable, object, formatFn) ->
     ui = instVarsTable.children('tbody')
     ui.empty()
-    $.each object, (idx, data) ->
-      ui.append(formatFn(idx, data))
+    $.each object, (key, value) ->
+      if key.indexOf("@") == 0
+        ui.append(formatFn(key, value))
 
   create_detail_view: ->
     @inspector = $('#objectInspector').clone()
