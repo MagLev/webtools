@@ -44,28 +44,35 @@ module WebTools
     end
 
     def objects
-      ctxt = frame.debug_info[:context]
-      variable_list = params[:splat].first.split("/objects/")
-      variable_list.each do |name|
-        name = name[0...(-"/objects".size)] if name.end_with? "/objects"
-        ctxt = details_for(ctxt[name.to_sym])
-      end
-      ctxt
+      instance_variables_for(object)
     end
 
     def object
-      objects[:"(__self__)"]
+      ctxt = frame.debug_info[:context]
+      obj = nil
+      variable_list = params[:splat].first.split("/objects/")
+      variable_list.each do |name|
+        name = name[0...(-"/objects".size)] if name.end_with? "/objects"
+        obj = ctxt[name.to_sym]
+        ctxt = instance_variables_for(obj)
+      end
+      obj
     end
 
-    def details_for(object)
-      hash = object.instance_variables.inject({}) do |hash, var|
+    def instance_variables_for(object)
+      object.instance_variables.inject({}) do |hash, var|
         hash[var.to_sym] = object.instance_variable_get(var)
         hash
       end
-      hash[:"(__self__)"] = object
-      hash[:"(__inspect__)"] = object.inspect
-      hash[:"(__class__)"] = object.class
-      hash
+    end
+    
+    def details_for(object)
+      { "instance_variables" => instance_variables_for(object),
+        "self" => object,
+        "inspect" => object.inspect,
+        "class" => object.class,
+        "do-it" => nil,
+        "do-it-result" => nil }
     end
 
     before do
@@ -105,9 +112,7 @@ module WebTools
       if params[:splat].first.end_with? "objects"
         respond_json objects
       else
-        respond_json("self" => object,
-                     "do-it" => nil,
-                     "do-it-result" => nil)
+        respond_json details_for(object)
       end
     end
 
@@ -147,12 +152,19 @@ module WebTools
         current_frame[:"do-it-result"] = details_for(result)
         respond_json current_frame
       elsif di = params["debug_info"]
-        if di["stepOffset"]
+        if di["stepOffset"] != current_frame[:debug_info][:stepOffset]
           status 404 # TODO: Not implemented
           respond_json current_frame
-        elsif di["source"]
-          current_frame[:defining_class].set_method_source(current_frame[:method_name],
-                                                           di["source"])
+        elsif di["source"] != current_frame[:debug_info][:source]
+          klass = current_frame[:defining_class]
+          frame_above = process.frames[process.frames.index(frame) + 1]
+          # Pop to one frame before the modified one
+          frame_above.delete
+          # Recompile the method
+          klass.set_method_source(current_frame[:method_name], di["source"])
+          # Step into the modified method
+          process.frames.first.step(:into)
+          params[:idx] = 0
           respond_json frame # Retreive the frame again, to show the updated source
         end
       else
@@ -164,16 +176,16 @@ module WebTools
     put "/process/:oop/frames/:idx/objects/*" do
       return 404 if params[:splat].first.end_with? "objects"
 
-      current_object = {"self" => object}
       if doIt = params["do-it"]
         begin
-          result = current_object.instance_eval(doIt)
+          result = object.instance_eval(doIt)
         rescue Exception => e
           result = e
         end
-        current_object["do-it"] = doIt
-        current_object["do-it-result"] = details_for(result)
-        respond_json current_object
+        return_value = details_for(object)
+        return_value["do-it"] = doIt
+        return_value["do-it-result"] = details_for(result)
+        respond_json return_value
       else
         404
       end

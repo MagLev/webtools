@@ -14,6 +14,10 @@ class DebuggerTest < MiniTest::Unit::TestCase
 
   class TestObject
     attr_reader :test, :test2, :my_clone
+
+    def inspect
+      "inspected TestObject"
+    end
   end
 
   def thread_foo
@@ -159,28 +163,32 @@ class DebuggerTest < MiniTest::Unit::TestCase
 
   def test_show_object
     get "/process/#{process.object_id}/frames/1/objects/obj"
-    assert_equal "test", json["@test"]
-    assert_equal "test2", json["@test2"]
-    assert_match /TestObject/, json["@my_clone"]
+    assert_match /TestObject/, json["self"]
+    assert_equal TestObject.new.inspect, json["inspect"]
+    assert_equal TestObject.name, json["class"]
+    assert_equal "test", json["instance_variables"]["@test"]
+    assert_equal "test2", json["instance_variables"]["@test2"]
+    assert_match /TestObject/, json["instance_variables"]["@my_clone"]
   end
 
   def test_returns_a_1_level_hash_with_the_instance_variables_and_the_SELF_key
     get "/process/#{process.object_id}/frames/1/objects/obj"
-    assert_match /TestObject/, json["(__self__)"]
+    assert_match /TestObject/, json["self"]
+    refute_nil json["instance_variables"]
   end
 
-  def test_inspect_into_an_object
+  def test_inspect_into_an_objects_instance_variables
     get "/process/#{process.object_id}/frames/1/objects/obj/objects"
     assert_equal "test2", json["@test2"]
     refute_nil json["@my_clone"]
-    assert_match /TestObject/, json["(__self__)"]
+    assert(json.keys.all? {|o| o.start_with? "@"})
   end
 
   def test_show_instance_variable
     get "/process/#{process.object_id}/frames/1/objects/obj/objects/@my_clone"
-    assert_equal "test", json["@test"]
-    assert_equal "test2", json["@test2"]
-    assert_nil json["@my_clone"]
+    assert_equal "test", json["instance_variables"]["@test"]
+    assert_equal "test2", json["instance_variables"]["@test2"]
+    assert_nil json["instance_variables"]["@my_clone"]
   end
 
   def test_delete_errors_from_log
@@ -210,27 +218,27 @@ class DebuggerTest < MiniTest::Unit::TestCase
     assert_equal "thread_foo", json["method_name"]
   end
 
-  def test_put_cannot_restart_errors
+  def test_post_cannot_restart_errors
     DebuggerLogEntry.create_continuation_labeled("non-restartable")
-    put "/process/#{ObjectLog.errors.last.object_id}"
+    post "/process/#{ObjectLog.errors.last.object_id}"
     assert_equal 404, last_response.status
   end
 
-  def test_put_cannot_restart_dead_process
+  def test_post_cannot_restart_dead_process
     assert process.alive?
     process.exit
     refute process.alive?
-    put "/process/#{process.object_id}"
+    post "/process/#{process.object_id}"
     assert_equal 404, last_response.status
     @process = nil
   end
 
-  def test_put_restarts_live_process
+  def test_post_restarts_live_process
     assert process.stop?
     assert process.alive?
     process.__trim_stack_to_level(2) # Pop the raise, so resume will put us before that
     process[:skip_test_exception] = true # Skip throwing
-    put "/process/#{process.object_id}"
+    post "/process/#{process.object_id}"
     refute process.alive?
     assert process.stop?
   end
@@ -240,27 +248,31 @@ class DebuggerTest < MiniTest::Unit::TestCase
     assert process.alive?
     process.__trim_stack_to_level(2) # Pop the raise, so resume will put us before that
     process[:skip_test_exception] = true # Skip throwing
-    put "/process/#{process.object_id}"
+    post "/process/#{process.object_id}"
     assert_equal process[:result].last.join, last_response.body
     @process = nil
   end
 
   def test_eval_in_frame
-    skip "Evaluation in frame not implemented"
-    post "/process/#{process.object_id}/frames/1", {"do-it" => "some"}
-    assert_equal "context", json
+    put "/process/#{process.object_id}/frames/1", {"do-it" => "some"}
+    assert_equal "context", json["do-it-result"]["self"]
+    assert_equal "context".inspect, json["do-it-result"]["inspect"]
+    assert_equal "String", json["do-it-result"]["class"]
   end
 
   def test_instance_eval_on_object
     @do_it = "@test"
-    post "/process/#{process.object_id}/frames/1/objects/obj", {"do-it" => "@test"}
-    assert_equal "test", json["(__self__)"]
+    put "/process/#{process.object_id}/frames/1/objects/obj", {"do-it" => "@test"}
+    assert_equal "@test", json["do-it"]
+    assert_equal "test", json["do-it-result"]["self"]
+    assert_equal "test".inspect, json["do-it-result"]["inspect"]
+    assert_equal "String", json["do-it-result"]["class"]
   end
 
   def test_raise_exception_on_continued_failure
     assert process.stop?
     process.__trim_stack_to_level(2) # before the raise
-    put "/process/#{process.object_id}"
+    post "/process/#{process.object_id}"
     assert_equal 500, last_response.status
     process = nil
   end
