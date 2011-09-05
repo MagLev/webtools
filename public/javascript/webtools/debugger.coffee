@@ -9,7 +9,7 @@ class Frame
   update_detail_view: (objectInfo) ->
     @inspector.hide()
     @inspector.children('.objInfoClass').text(objectInfo['(__class__)'])
-    @inspector.children('.objInfoValue').text(objectInfo['(__self__)'])
+    @inspector.children('.objInfoValue').text(objectInfo['(__inspect__)'])
     this.renderTableData @inspector.children('.objInstVars'), objectInfo, (idx, data) ->
       $("<tr><td>#{idx}</td><td>#{data}</td></tr>")
     @inspector.show()
