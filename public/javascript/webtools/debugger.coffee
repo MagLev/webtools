@@ -132,7 +132,7 @@ class Process
             url: "#{@server}/process/#{@pid}/frames/#{idx}",
             type: 'DELETE'
             success: =>
-
+              @render_stack()
           e.preventDefault()
         header.append(restartLink)
         div = document.createElement("div")
