@@ -67,7 +67,7 @@ module WebTools
         hash
       end
     end
-    
+
     def details_for(object)
       { "instance_variables" => instance_variables_for(object),
         "self" => object,
@@ -158,7 +158,7 @@ module WebTools
         respond_json frame
       elsif di = params["debug_info"]
         if di["stepOffset"] && di["stepOffset"] != current_frame[:debug_info][:stepOffset]
-          return 404 unless params[:idx] == 0
+          return 404 unless params[:idx] == "0"
           while di["stepOffset"].to_i > frame[:debug_info][:stepOffset].to_i
             frame.step(:over)
           end
