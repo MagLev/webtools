@@ -140,7 +140,6 @@ module WebTools
     end
 
     put "/process/:oop/frames/:idx" do
-      current_frame = frame.to_hash
       # TODO: Really check the posted document
       if doIt = params["do-it"]
         begin
@@ -148,15 +147,18 @@ module WebTools
         rescue Exception => e
           result = e
         end
+        current_frame = frame.to_hash
         current_frame[:"do-it"] = doIt
         current_frame[:"do-it-result"] = details_for(result)
         respond_json current_frame
       elsif params["index"] == "1" and params[:idx] == "0"
+        current_frame = frame.to_hash
         until frame.method_name != current_frame[:method_name]
           frame.step(:into) # Step into until we find the next ruby frame
         end
         respond_json frame
       elsif di = params["debug_info"]
+        current_frame = frame.to_hash
         if di["stepOffset"] && di["stepOffset"] != current_frame[:debug_info][:stepOffset]
           return 404 unless params[:idx] == "0"
           while di["stepOffset"].to_i > frame[:debug_info][:stepOffset].to_i
