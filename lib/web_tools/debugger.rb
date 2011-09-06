@@ -35,10 +35,12 @@ module WebTools
       Maglev::Debugger::Process.new(ObjectSpace._id2ref(params[:oop].to_i))
     end
 
+    def frames
+      params.has_key?("all") ? process.frames : process.ruby_frames
+    end
+
     def frame
-      f = (params.has_key?("all") ?
-           process.frames :
-           process.ruby_frames)[params[:idx].to_i]
+      f = frames[params[:idx].to_i]
       f.debug_info!
       f
     end
@@ -93,11 +95,7 @@ module WebTools
     end
 
     get "/process/:oop/frames" do
-      if params.has_key?("all")
-        respond_json process.frames
-      else
-        respond_json process.ruby_frames
-      end
+      respond_json frames
     end
 
     get "/process/:oop/frames/:idx" do
@@ -159,15 +157,15 @@ module WebTools
         end
         respond_json frame
       elsif di = params["debug_info"]
-        if di["stepOffset"] != current_frame[:debug_info][:stepOffset]
+        if di["stepOffset"] && di["stepOffset"] != current_frame[:debug_info][:stepOffset]
           return 404 unless params[:idx] == 0
           while di["stepOffset"].to_i > frame[:debug_info][:stepOffset].to_i
             frame.step(:over)
           end
           respond_json frame
-        elsif di["source"] != current_frame[:debug_info][:source]
+        elsif di["source"] && di["source"] != current_frame[:debug_info][:source]
           klass = current_frame[:defining_class]
-          frame_above = process.frames[process.frames.index(frame) + 1]
+          frame_above = frames[params[:idx].to_i + 1]
           # Pop to one frame before the modified one
           frame_above.delete
           # Recompile the method

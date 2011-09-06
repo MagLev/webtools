@@ -3,8 +3,12 @@ require 'minitest/autorun'
 require 'rack/test'
 require 'web_tools'
 require 'mocha'
+require 'fileutils'
 
 class DebuggerTest < MiniTest::Unit::TestCase
+  Fixtures = { :method_rewrite => File.expand_path("../fixtures/test_debugger_app_method_rewrite.rb", __FILE__) }
+  Fixtures.values.each {|f| require f }
+  
   include Rack::Test::Methods
   WebTools::Debugger
 
@@ -307,7 +311,28 @@ class DebuggerTest < MiniTest::Unit::TestCase
   end
 
   def test_change_source_code
-    skip
+    res = Maglev::Debugger.debug do
+      DebuggerAppMethodRewrite.new.rewritten?
+    end
+    Thread.pass
+    @process = res[:result].thread
+    assert @process.alive?
+    assert @process.stop?
+    new_source = "  def rewritten?\n    true\n  end\n"
+    FileUtils.cp(Fixtures[:method_rewrite], Fixtures[:method_rewrite] + ".bak")
+
+    put "/process/#{process.object_id}/frames/2", {
+      "debug_info" => {
+        "source" => new_source } }
+
+    top = Maglev::Debugger::Frame.new(:method => @process.__method_at(1),
+                                     :thread => @process,
+                                     :index => 1)
+    top.debug_info!
+    assert_equal :rewritten?, top.method_name
+    assert_equal new_source, top.debug_info[:source]
+  ensure
+    FileUtils.cp(Fixtures[:method_rewrite] + ".bak", Fixtures[:method_rewrite])
   end
 
   def test_instance_eval_on_object
