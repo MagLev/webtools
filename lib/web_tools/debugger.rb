@@ -166,15 +166,12 @@ module WebTools
           end
           respond_json frame
         elsif di["source"] && di["source"] != current_frame[:debug_info][:source]
-          klass = current_frame[:defining_class]
-          frame_above = frames[params[:idx].to_i + 1]
-          # Pop to one frame before the modified one
-          frame_above.delete
-          # Recompile the method
-          klass.set_method_source(current_frame[:method_name], di["source"])
-          # Step into the modified method
-          process.frames.first.step(:into)
-          params[:idx] = 0
+          current_frame = frame
+          return 404 if frame.block_nesting > 0 # cannot change nested frames
+          klass = current_frame.defining_class
+          klass.set_method_source(current_frame.method_name, di["source"])
+          current_frame.delete
+          params[:idx] = "0"
           respond_json frame # Retreive the frame again, to show the updated source
         end
       else
