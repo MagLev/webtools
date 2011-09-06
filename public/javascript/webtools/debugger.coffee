@@ -78,7 +78,10 @@ class Frame
         name: "#{@frame_idx}_evaluator"
         id: "#{@frame_idx}_evaluator"
         class: "ui-widget-content ui-corner-all"
+        style: 'width: 100%;'
       @container.prepend(@evaluator)
+    @evaluator.bind "focus", =>
+
     @evaluator.unbind("keypress")
     @evaluator.bind "keypress", (e) =>
       code = e.keyCode if e.keyCode?
@@ -277,7 +280,7 @@ $(document).ready ->
         debug_info:
           source: window.editor.getSession().getValue()
         success: ->
-          alert('Save successful. The stack has been reset to make the new method the top of stack')
+          alert('Save successful. The stack has been reset to the new method.')
           debugger
           $("#tabs").select(".reload-button").filter(':visible').click()
 

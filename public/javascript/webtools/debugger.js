@@ -106,10 +106,12 @@ Frame = (function() {
         type: "text",
         name: "" + this.frame_idx + "_evaluator",
         id: "" + this.frame_idx + "_evaluator",
-        "class": "ui-widget-content ui-corner-all"
+        "class": "ui-widget-content ui-corner-all",
+        style: 'width: 100%;'
       });
       this.container.prepend(this.evaluator);
     }
+    this.evaluator.bind("focus", __bind(function() {}, this));
     this.evaluator.unbind("keypress");
     return this.evaluator.bind("keypress", __bind(function(e) {
       var code;
@@ -353,7 +355,7 @@ $(document).ready(function() {
           source: window.editor.getSession().getValue()
         },
         success: function() {
-          alert('Save successful. The stack has been reset to make the new method the top of stack');
+          alert('Save successful. The stack has been reset to the new method.');
           debugger;
           return $("#tabs").select(".reload-button").filter(':visible').click();
         }
