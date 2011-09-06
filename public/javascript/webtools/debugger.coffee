@@ -8,14 +8,16 @@ class Frame
 
   update_detail_view: (objectInfo) ->
     @inspector.hide()
-    @inspector.children('.objInfoClass').text(objectInfo['(__class__)'])
-    @inspector.children('.objInfoValue').text(objectInfo['(__inspect__)'])
-    this.renderTableData @inspector.children('.objInstVars'), objectInfo, (idx, data) ->
-      $("<tr><td>#{idx}</td><td>#{data}</td></tr>")
+    @inspector.find('.objInfoClass').text(objectInfo['class'])
+    @inspector.find('.objInfoValue').text(objectInfo['inspect'])
+    this.renderTableData @inspector.children('.objInstVars'),
+      objectInfo.instance_variables,
+      (idx, data) ->
+        $("<tr><td>#{idx}</td><td>#{data}</td></tr>")
     @inspector.show()
 
-  renderTableData: (instVarsTable, object, formatFn) ->
-    ui = instVarsTable.children('tbody')
+  renderTableData: (table, object, formatFn) ->
+    ui = table.children('tbody')
     ui.empty()
     $.each object, (key, value) ->
       if key.indexOf("@") == 0
@@ -28,15 +30,19 @@ class Frame
     @container.append(@inspector)
 
   create_source_code_holder: () ->
-    @container.prepend($('#editor'))
-    $('#editor').show()
+    @container.prepend(window.editorDiv)
+    window.editor.save_url = "#{@server}/process/#{@pid}/frames/#{@frame_idx}"
+    window.editorDiv.show()
 
   create_inspector: (object, index, path) ->
     index = 0 unless index?
     path = "#{@server}/process/#{@pid}/frames/#{@frame_idx}" unless path?
     options = $([])
-    $.each object, (key, value) ->
-      if "#{key}".indexOf("@") == 0 || key == "(__self__)" || key == "(__class__)"
+    if object.instance_variables?
+      $.each object.instance_variables, (key, value) ->
+        options.push("#{key}")
+    else
+      $.each object, (key, value) ->
         options.push("#{key}")
     if not @inspector_div?
       @inspector_div = $(document.createElement("div"))
@@ -59,8 +65,8 @@ class Frame
       url = "#{path}/objects/#{value}"
       for i in @inspectors.slice(index + 1)
         i.html("")
-      $.get "#{url}/objects", (object) =>
-        this.create_inspector(object, index + 1, url)
+      $.get url, (object) =>
+        this.create_inspector(object.instance_variables, index + 1, url)
         this.update_detail_view(object)
       , 'json'
 
@@ -84,7 +90,7 @@ class Frame
             "do-it": @evaluator.val()
           success: (data) =>
             result = data["do-it-result"]
-            @evaluator.val("#{@evaluator.val()} => #{result['(__inspect__)']}")
+            @evaluator.val("#{@evaluator.val()} => #{result['inspect']}")
             this.update_detail_view(result)
             @evaluator.select()
           dataType: 'json'
@@ -132,7 +138,7 @@ class Process
             url: "#{@server}/process/#{@pid}/frames/#{idx}",
             type: 'DELETE'
             success: =>
-              @render_stack()
+              this.render()
           e.preventDefault()
         header.append(restartLink)
         div = document.createElement("div")
@@ -142,6 +148,7 @@ class Process
         if idx == 0
           @selected_frame = new Frame(@server, @pid, 0, $(div))
           @selected_frame.render()
+      @stack_div.accordion( "destroy" )
       @stack_div.accordion
         clearStyle: true
         collapsible: true
@@ -176,6 +183,11 @@ class Debugger
       $(errors).each (idx, e) =>
         @process_box.append("<option value='#{e.process_id}'>#{e.process_id}: #{escapeHTML(e.label)}</option>")
     @process_box.bind "change", =>
+      @process = new Process(@server, @process_box.val(), @tab)
+      @process.render()
+    refreshButton = @content.children(".reload-button")
+    refreshButton.bind "click", (e) =>
+      e.preventDefault()
       @process = new Process(@server, @process_box.val(), @tab)
       @process.render()
 
@@ -247,6 +259,7 @@ $(document).ready ->
   DebuggerApp.setup()
   window.RubyMode = require("ace/mode/ruby").Mode
   window.canon = require('pilot/canon')
+  window.editorDiv = $("#editor")
   window.editor = ace.edit('editor')
   window.editor.getSession().setUseSoftTabs(true)
   window.editor.getSession().setMode(new RubyMode())
@@ -258,4 +271,14 @@ $(document).ready ->
       sender: "editor"
     exec: ->
       debugger
+      $.ajax
+        url: window.editor.save_url
+        type: 'PUT'
+        debug_info:
+          source: window.editor.getSession().getValue()
+        success: ->
+          alert('Save successful. The stack has been reset to make the new method the top of stack')
+          debugger
+          $("#tabs").select(".reload-button").filter(':visible').click()
+
 

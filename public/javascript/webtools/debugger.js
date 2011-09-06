@@ -9,7 +9,7 @@ window.escapeHTML = function(str) {
   }
   return $("<i></i>").text(str).html();
 };
-Frame = function() {
+Frame = (function() {
   function Frame(server, pid, frame_idx, container) {
     this.server = server;
     this.pid = pid;
@@ -18,16 +18,16 @@ Frame = function() {
   }
   Frame.prototype.update_detail_view = function(objectInfo) {
     this.inspector.hide();
-    this.inspector.children('.objInfoClass').text(objectInfo['(__class__)']);
-    this.inspector.children('.objInfoValue').text(objectInfo['(__inspect__)']);
-    this.renderTableData(this.inspector.children('.objInstVars'), objectInfo, function(idx, data) {
+    this.inspector.find('.objInfoClass').text(objectInfo['class']);
+    this.inspector.find('.objInfoValue').text(objectInfo['inspect']);
+    this.renderTableData(this.inspector.children('.objInstVars'), objectInfo.instance_variables, function(idx, data) {
       return $("<tr><td>" + idx + "</td><td>" + data + "</td></tr>");
     });
     return this.inspector.show();
   };
-  Frame.prototype.renderTableData = function(instVarsTable, object, formatFn) {
+  Frame.prototype.renderTableData = function(table, object, formatFn) {
     var ui;
-    ui = instVarsTable.children('tbody');
+    ui = table.children('tbody');
     ui.empty();
     return $.each(object, function(key, value) {
       if (key.indexOf("@") === 0) {
@@ -42,8 +42,9 @@ Frame = function() {
     return this.container.append(this.inspector);
   };
   Frame.prototype.create_source_code_holder = function() {
-    this.container.prepend($('#editor'));
-    return $('#editor').show();
+    this.container.prepend(window.editorDiv);
+    window.editor.save_url = "" + this.server + "/process/" + this.pid + "/frames/" + this.frame_idx;
+    return window.editorDiv.show();
   };
   Frame.prototype.create_inspector = function(object, index, path) {
     var inspector, options;
@@ -54,11 +55,15 @@ Frame = function() {
       path = "" + this.server + "/process/" + this.pid + "/frames/" + this.frame_idx;
     }
     options = $([]);
-    $.each(object, function(key, value) {
-      if (("" + key).indexOf("@") === 0 || key === "(__self__)" || key === "(__class__)") {
+    if (object.instance_variables != null) {
+      $.each(object.instance_variables, function(key, value) {
         return options.push("" + key);
-      }
-    });
+      });
+    } else {
+      $.each(object, function(key, value) {
+        return options.push("" + key);
+      });
+    }
     if (!(this.inspector_div != null)) {
       this.inspector_div = $(document.createElement("div"));
       this.inspector_div.addClass("inspectors");
@@ -88,8 +93,8 @@ Frame = function() {
         i = _ref[_i];
         i.html("");
       }
-      return $.get("" + url + "/objects", __bind(function(object) {
-        this.create_inspector(object, index + 1, url);
+      return $.get(url, __bind(function(object) {
+        this.create_inspector(object.instance_variables, index + 1, url);
         return this.update_detail_view(object);
       }, this), 'json');
     }, this));
@@ -123,7 +128,7 @@ Frame = function() {
           success: __bind(function(data) {
             var result;
             result = data["do-it-result"];
-            this.evaluator.val("" + (this.evaluator.val()) + " => " + result['(__inspect__)']);
+            this.evaluator.val("" + (this.evaluator.val()) + " => " + result['inspect']);
             this.update_detail_view(result);
             return this.evaluator.select();
           }, this),
@@ -144,8 +149,8 @@ Frame = function() {
     }, this), 'json');
   };
   return Frame;
-}();
-Process = function() {
+})();
+Process = (function() {
   function Process(server, pid, tab) {
     this.server = server;
     this.pid = pid;
@@ -184,7 +189,7 @@ Process = function() {
             url: "" + this.server + "/process/" + this.pid + "/frames/" + idx,
             type: 'DELETE',
             success: __bind(function() {
-              return this.render_stack();
+              return this.render();
             }, this)
           });
           return e.preventDefault();
@@ -199,6 +204,7 @@ Process = function() {
           return this.selected_frame.render();
         }
       }, this));
+      this.stack_div.accordion("destroy");
       return this.stack_div.accordion({
         clearStyle: true,
         collapsible: true,
@@ -214,8 +220,8 @@ Process = function() {
     }, this), 'json');
   };
   return Process;
-}();
-Debugger = function() {
+})();
+Debugger = (function() {
   function Debugger(server) {
     this.server = server;
     this.tab_content_template = $("#tab_content_template");
@@ -237,13 +243,20 @@ Debugger = function() {
     return this.content.removeAttr("id");
   };
   Debugger.prototype.fill_process_selector = function() {
+    var refreshButton;
     this.process_box = this.content.children("select[name='process-select-box']");
     $.getJSON("" + this.server + "/process", __bind(function(errors) {
       return $(errors).each(__bind(function(idx, e) {
         return this.process_box.append("<option value='" + e.process_id + "'>" + e.process_id + ": " + (escapeHTML(e.label)) + "</option>");
       }, this));
     }, this));
-    return this.process_box.bind("change", __bind(function() {
+    this.process_box.bind("change", __bind(function() {
+      this.process = new Process(this.server, this.process_box.val(), this.tab);
+      return this.process.render();
+    }, this));
+    refreshButton = this.content.children(".reload-button");
+    return refreshButton.bind("click", __bind(function(e) {
+      e.preventDefault();
       this.process = new Process(this.server, this.process_box.val(), this.tab);
       return this.process.render();
     }, this));
@@ -261,7 +274,7 @@ Debugger = function() {
     return this.content;
   };
   return Debugger;
-}();
+})();
 DebuggerApp = {
   setup: function() {
     var add_tab, debuggers, dialog, form, tab_counter, tab_server_input, tabs;
@@ -321,6 +334,7 @@ $(document).ready(function() {
   DebuggerApp.setup();
   window.RubyMode = require("ace/mode/ruby").Mode;
   window.canon = require('pilot/canon');
+  window.editorDiv = $("#editor");
   window.editor = ace.edit('editor');
   window.editor.getSession().setUseSoftTabs(true);
   window.editor.getSession().setMode(new RubyMode());
@@ -332,7 +346,18 @@ $(document).ready(function() {
       sender: "editor"
     },
     exec: function() {
-      debugger;
+      debugger;      return $.ajax({
+        url: window.editor.save_url,
+        type: 'PUT',
+        debug_info: {
+          source: window.editor.getSession().getValue()
+        },
+        success: function() {
+          alert('Save successful. The stack has been reset to make the new method the top of stack');
+          debugger;
+          return $("#tabs").select(".reload-button").filter(':visible').click();
+        }
+      });
     }
   });
 });
