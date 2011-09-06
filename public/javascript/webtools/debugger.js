@@ -351,8 +351,10 @@ $(document).ready(function() {
       debugger;      return $.ajax({
         url: window.editor.save_url,
         type: 'PUT',
-        debug_info: {
-          source: window.editor.getSession().getValue()
+        data: {
+          debug_info: {
+            source: window.editor.getSession().getValue()
+          }
         },
         success: function() {
           alert('Save successful. The stack has been reset to the new method.');
