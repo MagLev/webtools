@@ -1,4 +1,5 @@
 ENV["RACK_ENV"] = "test"
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require 'minitest/autorun'
 require 'rack/test'
 require 'web_tools'
@@ -8,7 +9,7 @@ require 'fileutils'
 class DebuggerTest < MiniTest::Unit::TestCase
   Fixtures = { :method_rewrite => File.expand_path("../fixtures/test_debugger_app_method_rewrite.rb", __FILE__) }
   Fixtures.values.each {|f| require f }
-  
+
   include Rack::Test::Methods
   WebTools::Debugger
 
@@ -258,7 +259,6 @@ class DebuggerTest < MiniTest::Unit::TestCase
   end
 
   def test_eval_in_frame
-    skip
     put "/process/#{process.object_id}/frames/1", {"do-it" => "some"}
     assert_equal "context", json["do-it-result"]["self"]
     assert_equal "context".inspect, json["do-it-result"]["inspect"]
@@ -276,7 +276,13 @@ class DebuggerTest < MiniTest::Unit::TestCase
                                         :thread => process,
                                         :index => 2)
     above.delete # Pop before that
-    put("/process/#{process.object_id}/frames/0", "index" => 1)
+    Exception.install_debug_block do |e|
+      if e.to_s =~ /ImproperOperation/
+        nil.pause
+      end
+    end
+    put "/process/#{process.object_id}/frames/0", {"index" => 1}
+    File.open('/tmp/foo', 'w') {|f| f << last_response.body }
     new_top = Maglev::Debugger::Frame.new(:method => process.__method_at(1),
                                           :thread => process,
                                           :index => 1)
@@ -326,12 +332,45 @@ class DebuggerTest < MiniTest::Unit::TestCase
         "source" => new_source } }
 
     top = Maglev::Debugger::Frame.new(:method => @process.__method_at(1),
-                                     :thread => @process,
-                                     :index => 1)
+                                      :thread => @process,
+                                      :index => 1)
     top.debug_info!
     assert_equal :rewritten?, top.method_name
+    assert_match Regexp.new(Regexp.escape(new_source)), File.read(Fixtures[:method_rewrite])
+    assert DebuggerAppMethodRewrite.new.rewritten?
+    require 'maglev/method_source'
+    assert_equal new_source, DebuggerAppMethodRewrite.method_source(:rewritten?)[0]
     assert_equal new_source, top.debug_info[:source]
   ensure
+    @process = nil
+    FileUtils.cp(Fixtures[:method_rewrite] + ".bak", Fixtures[:method_rewrite])
+  end
+
+  def test_change_source_code_and_resume
+    res = Maglev::Debugger.debug do
+      DebuggerAppMethodRewrite.new.rewritten?
+    end
+    Thread.pass
+    @process = res[:result].thread
+    assert @process.alive?
+    assert @process.stop?
+    new_source = "  def rewritten?\n    'true'\n  end\n"
+    FileUtils.cp(Fixtures[:method_rewrite], Fixtures[:method_rewrite] + ".bak")
+
+    put "/process/#{process.object_id}/frames/2", {
+      "debug_info" => {
+        "source" => new_source } }
+
+    top = Maglev::Debugger::Frame.new(:method => @process.__method_at(1),
+                                      :thread => @process,
+                                      :index => 1)
+    top.debug_info!
+    assert_equal :rewritten?, top.method_name
+    Maglev.expects(:abort_transaction).returns(true)
+    post "/process/#{process.object_id}", { "running" => "true" }
+    assert_equal 'true', last_response.body
+  ensure
+    @process = nil
     FileUtils.cp(Fixtures[:method_rewrite] + ".bak", Fixtures[:method_rewrite])
   end
 
