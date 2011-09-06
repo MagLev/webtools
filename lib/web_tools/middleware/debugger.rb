@@ -93,9 +93,40 @@ __END__
 <html>
 <head>
   <title>Maglev Debugger</title>
+  <script type="text/javascript"
+   src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#resumeDebugging").bind("click", function (e) {
+        e.preventDefault();
+        $.ajax({ url: "<%= path %>",
+                 success: function (data) {
+                   $('html').replaceWith(data); // On success, replace the doc
+                 },
+                 error: function (jqXHR) {
+                   $('#error').text(jqXHR.responseText); // On error, update
+                 },
+                 type: 'POST',
+                 data: {
+                   running: "true",
+                   debugging: "true" }
+               });
+      });
+      $("#resume").bind("click", function (e) {
+        e.preventDefault();
+        $.ajax({ url: "<%= path %>",
+                 complete: function (jqXHR) {
+                   $('html').replaceWith(jqXHR.responseText);
+                 },
+                 type: 'POST',
+                 data: { running: "true" }
+               });
+      });
+    })
+  </script>
 </head>
 <body>
-  <h4><%= title %></h4>
+  <h4 id='error'><%= title %></h4>
   There was an error, and execution has been suspended.
   You can interact with this debugging service to inspect the problem.
   <br>
@@ -104,10 +135,10 @@ __END__
   <a href="<%= path %>"><%= path %></a>
   <br>
   Once you're done debugging, you can click
-  <form style="display:inline" name="resumeForm" method="POST" action="<%= path %>">
-    <input type="hidden" name="running" VALUE="true">
-    <a href="#" onClick="document.resumeForm.submit(); return false">here</a>
-  </form>
-  to resume the original process.
+  <a href="#" id="resumeDebugging">here</a>
+  to resume the original process within the debugger. If another error occurs,
+  this will update this page and keep the debugging context alive.<br>
+  If you want to get to the Sinatra error handler, click
+  <a href="#" id="resume">here</a> to just continue the process.
 </body>
 </html>
