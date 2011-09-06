@@ -273,7 +273,6 @@ $(document).ready ->
       mac: "Command-S",
       sender: "editor"
     exec: ->
-      debugger
       $.ajax
         url: window.editor.save_url
         type: 'PUT'
@@ -282,7 +281,6 @@ $(document).ready ->
             source: window.editor.getSession().getValue()
         success: ->
           alert('Save successful. The stack has been reset to the new method.')
-          debugger
           $("#tabs").select(".reload-button").filter(':visible').click()
 
 

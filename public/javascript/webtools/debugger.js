@@ -348,7 +348,7 @@ $(document).ready(function() {
       sender: "editor"
     },
     exec: function() {
-      debugger;      return $.ajax({
+      return $.ajax({
         url: window.editor.save_url,
         type: 'PUT',
         data: {
@@ -358,7 +358,6 @@ $(document).ready(function() {
         },
         success: function() {
           alert('Save successful. The stack has been reset to the new method.');
-          debugger;
           return $("#tabs").select(".reload-button").filter(':visible').click();
         }
       });
