@@ -105,7 +105,7 @@ __END__
   <br>
   Once you're done debugging, you can click
   <form style="display:inline" name="resumeForm" method="POST" action="<%= path %>">
-    <input type="hidden" name="resume" VALUE="">
+    <input type="hidden" name="running" VALUE="true">
     <a href="#" onClick="document.resumeForm.submit(); return false">here</a>
   </form>
   to resume the original process.
