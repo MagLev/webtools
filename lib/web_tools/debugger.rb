@@ -127,6 +127,8 @@ module WebTools
       return 404 if p.is_a? Maglev::Debugger::ObjectLogError
       if params["running"] == "true" and p.thread.alive? and p.thread.stop?
         p.thread.run
+        Thread.pass
+        Thread.pass
         p.thread.join
         if (result = p.thread[:result]).is_a? Maglev::Debugger::Process
           if params["debugging"] == "true"
@@ -134,6 +136,7 @@ module WebTools
             body result.exception.inspect
           else
             p.thread.kill
+            Thread.pass
             raise result.exception
           end
         else
