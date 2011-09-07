@@ -55,9 +55,13 @@ module WebTools::Middleware
 
       def wrap_call(env)
         if debugger_active?
-          response = @debugger_app.call(env)
-          response[1]['Access-Control-Allow-Origin'] = "*"
-          response
+          if env["PATH_INFO"] == "/"
+            [500, {"Content-Type" => "text/html"}, info_message(env)]
+          else
+            response = @debugger_app.call(env)
+            response[1]['Access-Control-Allow-Origin'] = "*"
+            response
+          end
         else
           application_call(env, yield)
         end
