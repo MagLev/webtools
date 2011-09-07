@@ -1,0 +1,20 @@
+<script type="text/javascript" language="javascript">
+	GemStone.runJs('scripts/MethodList.js', SEARCH_OBJECT);
+</script> 
+
+<div id='newTab' class='methodListPanel hidden'>
+	<div class='methodList'>
+		<table>
+			<thead><tr>
+				<th>Dictionary</th>
+				<th>Class Category</th>
+				<th>Class</th>
+				<th>Category</th>
+				<th>Method</th>
+			</tr></thead>
+			<tbody />
+		</table>
+	</div>
+	<div class='editArea newEditor' tabindex=0>
+	</div>
+</div>

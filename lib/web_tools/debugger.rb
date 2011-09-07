@@ -5,10 +5,7 @@ require 'rack/contrib/jsonp'
 require 'maglev/debugger'
 
 module WebTools
-  class Debugger < Sinatra::Base
-    include WebTools::Support::ServiceHelper
-    use Rack::JSONP
-
+  class Debugger < Tool
     def respond_json(obj)
       content_type :json
       result = case obj

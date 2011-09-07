@@ -1,0 +1,39 @@
+<script type="text/javascript" language="javascript"> 
+//<![CDATA[ 
+(function() {
+	var	$tabPanel
+	,	editor
+	;
+	GemStone.addTab({
+		id:		'newTab'
+	,	label:	'Workspace'
+	,	title:	'Smalltalk Workspace'
+	,	onAdd:	onAdd
+	});
+	return;
+
+	function onAdd(tabPanel) {
+		$tabPanel = tabPanel;
+		GemStone.runJs(
+			'scripts/editor.js'
+		,	{ 
+				editArea: $('.editArea', $tabPanel)
+			}
+		,	function(object) { editor = object; }
+		);
+	}
+	
+}())
+//]]> 
+</script> 
+
+<div id='newTab' class='workspacePanel hidden'>
+	<div id='workspacePanelOnce' class='once'>
+		<style type="text/css">
+			.workspacePanel .editArea { position: absolute; top: 0; left: 0; right: 0; bottom: 0;   margin: 2px; }
+			.workspacePanel .editArea .CodeMirror { height: 100%; }
+			.workspacePanel .editArea .CodeMirror .CodeMirror-scroll { height: 100%; }
+		</style>
+	</div>
+	<div class='editArea' tabindex=0>
+</div>

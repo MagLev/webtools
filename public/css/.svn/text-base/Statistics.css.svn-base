@@ -1,0 +1,24 @@
+
+td.number { text-align: right; }
+button.readFile { position: absolute; top: 2px; left: 5px; width: 80px; z-index: 3; }
+button.refresh { position: absolute; top: 2px; left: 85px; width: 80px; z-index: 3; }
+.statmonPanel .statmonFiles {
+	position: absolute; top: 0; left: 0; bottom: 80%; right: 0; margin: 4px; 
+	overflow-y: auto; }
+.statmonPanel .statmonFiles table 		{ table-layout: fixed; width: 100%; }
+.statmonPanel .statmonFiles .start 		{ width: 17em; }
+.statmonPanel .statmonFiles .platform 	{ width: 6em; }
+.statmonPanel .statmonFiles .version 	{ width: 6em; }
+.statmonPanel .statmonFiles .machine 	{ width: 9em; }
+.statmonPanel .statmonFiles .filename 	{ width: 100%; }
+.statmonPanel .statmonFiles tr td 		{ overflow: hidden; white-space: nowrap; }
+#readStatmonDialog form input#statmonPath { width: 100%; }
+.statmonPanel .statmonProcesses { 
+	position: absolute; top: 20%; left: 0; bottom: 40%; right: 0%;
+	margin: 4px; overflow: hidden; }
+.statmonPanel .statmonProcesses table { width: 100%; }
+.statmonPanel .statmonStats { 
+	position: absolute; top: 60%; left: 0%; bottom: 0; right: 0;
+	margin: 4px; overflow: hidden; }
+.statmonPanel .statmonStats table { width: 100%; }
+.flot { position: absolute; top: 100; left: 10; bottom: 20; right: 10; }

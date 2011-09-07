@@ -1,0 +1,32 @@
+
+.debuggerPanel .toolbar { 
+	position: absolute; top: 0; left: 0; right: 0; height: 2em; 
+	border: 1px solid grey; margin: 1px; padding: 1px;
+}
+.debuggerPanel .toolbar span {
+	border-left: 1px solid black; padding-left: 0.5em; 
+}
+.debuggerPanel .stack { 
+	position: absolute; top: 2.5em; left: 0; right: 50%; bottom: 50%; 
+	overflow-x: hidden; overflow-y: auto; 
+	border: 1px solid grey; margin: 1px; padding: 1px;
+}
+.debuggerPanel .stack .frame { white-space:nowrap; }
+.debuggerPanel .variables { 
+	position: absolute; top: 2.5em; left: 50%; right: 0; bottom: 65%; 
+	overflow-y: auto; 
+	border: 1px solid grey; margin: 1px; padding: 1px;
+	width: 50%;
+}
+.debuggerPanel .variableValue { 
+	position: absolute; top: 35%; left: 50%; right: 0; bottom: 50%; 
+	overflow-y: auto; 
+	border: 1px solid grey; margin: 1px; padding: 1px;
+	width: 50%;
+}
+.debuggerPanel .variables td.value { white-space: nowrap; }
+.debuggerPanel .variables td.oop { text-align: right; width: 7em; }
+.debuggerPanel .editArea { 
+	position: absolute; top: 50%; left: 0; right: 0; bottom: 0;   
+	margin: 2px; 
+}

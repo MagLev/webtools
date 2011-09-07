@@ -1,0 +1,25 @@
+
+.CodeMirror-line-numbers { width: 2.2em; color: #aaa; background-color: #eee; text-align: right;
+	padding-right: .3em; font-size: 10pt; font-family: monospace; padding-top: .4em;
+	line-height: normal; }
+
+.cm-st-character	{ color: rgb(128,0,128); }
+.cm-st-comment		{ color: rgb(0,200,0); font-style: italic; }
+.cm-st-string		{ color: rgb(128,0,128); }
+.cm-st-symbol		{ color: rgb(128,0,128); }
+.cm-st-boolean		{ color: rgb(0,0,128); }
+.cm-st-self			{ color: rgb(0,0,128); }
+.cm-st-super		{ color: rgb(0,0,128); }
+.cm-st-nil			{ color: rgb(0,0,128); }
+.cm-st-number		{ color: rgb(1,6,4); }
+.cm-st-return		{ color: rgb(160,0,0); }
+.cm-st-keyword		{ color: rgb(0,0,255); }
+.cm-st-global		{ font-weight: bold; }
+
+div.jj_menu_item span.disabled { color: grey; }
+
+.compileError { position: absolute; background: yellow; }
+
+.gsStepPoint { border-bottom: 1px dotted #00ba00; }
+.gsCurrentStepPoint { background: Yellow; }
+.gsSend { border-bottom: 1px dotted #ba0000; }

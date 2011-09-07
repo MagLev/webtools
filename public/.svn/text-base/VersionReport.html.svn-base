@@ -1,0 +1,50 @@
+<script type="text/javascript" language="javascript"> 
+//<![CDATA[ 
+(function() {
+	var	$tabPanel
+	,	$table
+	;
+	GemStone.addTab({
+		id:		'newTab'
+	,	label:	'Version'
+	,	title:	'Show Stone and Gem version report'
+	,	onAdd:	onAdd
+	});
+	return;
+
+	function onAdd(tabPanel) {
+		$tabPanel = tabPanel;
+		$table = $('.versionTable', $tabPanel);
+		GemStone.ajax('GET', 'VersionReport', null, gotData);
+	}
+	
+	function gotData(json) {
+		var items = [];
+		var gem = json.gem;	
+		$.each(json.stone, function(key, value){
+			var field = value === gem[key] ? '' : gem[key];
+			items.push('<tr><th>' + key + '</th>');
+			items.push('<td>' + value + '</td>');
+			items.push('<td>' + field + '</td></tr>');
+		});
+		$table.empty().append(items.join(''));
+	}
+}())
+//]]> 
+</script> 
+
+<div id='newTab' class='versionPanel hidden'>
+	<div id='versionPanelOnce' class='once'>
+		<style type="text/css">
+.versionPanel { overflow: auto; }
+.versionPanel table { margin-left: auto; margin-right: auto; }
+		</style>
+	</div>
+	<table>
+		<caption>GemStone Version Report</caption>
+		<thead><tr>
+			<th>Attribute</th><th>Stone</th><th>WebTools</th>
+		</tr></thead>
+		<tbody class='versionTable' />
+	</table>
+</div>

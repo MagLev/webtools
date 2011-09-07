@@ -1,0 +1,64 @@
+<script type="text/javascript" language="javascript"> 
+	GemStone.runJs('scripts/Statistics.js');
+</script> 
+
+<div id='newTab' class='statmonPanel hidden'>
+	<div id='statmonPanelOnce' class='once'>
+		<div id='readStatmonDialog' title='Read File...' class='hidden'>
+			<form><fieldset>
+				<label for='statmonPath'>Enter server path to Statmonitor file:</label>
+				<br /><br />
+				<input type='text' name='path' id='statmonPath' />
+			</fieldset></form>
+		</div>
+		<div id='removeStatmonDialog' title='Confirm' class='hidden'>
+			<p>Are you sure you want to remove <span class='path'></span>?</p>
+		</div>
+		<div id='statTemplate' class='hidden'>
+			<div class="flot"></div>
+		</div>
+	</div>
+	<button class="readFile" type="button">Load ...</button>
+	<button class="refresh" type="button">Refresh</button>
+	<div class='statmonFiles'>
+		<table>
+			<caption>Statmonitor Files</caption>
+			<thead><tr>
+				<th class="start">Start Time</th>
+				<th class="platform">Platform</th>
+				<th class="version">Version</th>
+				<th class="machine">Machine</th>
+				<th class="filename">Filename</th>
+			</tr></thead>
+			<tbody />
+		</table>
+	</div>
+	<div class='statmonProcesses hidden'>
+		<table>
+			<caption>Processes</caption>
+			<thead><tr>
+				<th>Start</th>
+				<th>Samples</th>
+				<th>Pid</th>
+				<th>Session</th>
+				<th>Type</th>
+				<th>Primitives</th>
+				<th>Max CRB</th>
+				<th>Name</th>
+			</tr></thead>
+			<tbody />
+		</table>
+	</div>
+	<div class='statmonStats hidden'>
+		<table>
+			<caption>Statistics</caption>
+			<thead><tr>
+				<th>Name</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Average</th>
+			</tr></thead>
+			<tbody />
+		</table>
+	</div>
+</div>

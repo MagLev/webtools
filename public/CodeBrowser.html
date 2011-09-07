@@ -1,0 +1,51 @@
+<script type="text/javascript" language="javascript">
+	GemStone.runJs('scripts/CodeBrowser.js');
+</script> 
+
+<div id='newTab' class='browserPanel hidden'>
+	<div class='navigation'>
+		<div class='dictPckgTabs ui-widget-content ui-corner-all'>
+			<ul>
+				<li><a title='Show classes organized by SymbolDictionary'>Dicts</a></li>
+				<li><a title='Show classes organized by Monticello Package'>Pkgs</a></li>
+			</ul>
+			<div class='dictList divList' tabindex=0></div>
+			<div class='pckgList divList' tabindex=0></div>
+		</div>
+		<div class='classCats divList ui-widget-content ui-corner-all'></div>
+		<div class='classesTab ui-widget-content ui-corner-all'>
+			<ul>
+				<li><a title='Show classes in alphabetical order'>Classes</a></li>
+				<li><a title='Show classes in hierarichal order'>Hierarchy</a></li>
+			</ul>
+			<div class='classList divList' tabindex=0></div>
+			<div class='classTree divList'></div>
+		</div>
+		<div class='methodFilter ui-widget-content ui-corner-all'>
+			<div class='methodFilterList divList' tabindex=0></div>
+			<div class='catsVariablesTabs tabs-empty'>
+				<ul>
+					<li><a title='Group methods by category'>Categories</a></li>
+					<li><a title='Group methods by variable references'>Vars</a></li>
+				</ul>
+				<div class='categoriesPanel'></div>
+				<div class='variablesPanel'></div>
+			</div>
+			<div class='instanceClassTabs tabs-bottom tabs-empty ui-corner-bottom'>
+				<ul>
+					<li><a title='Show instance-side methods'>Instance</a></li>
+					<li><a title='Show class-side methods'>Class</a></li>
+				</ul>
+				<div class='instancePanel'>Instance</div>
+				<div class='classPanel'>Class</div>
+			</div>
+		</div>
+		<div class='methodDiv'>
+			<select class='superList'></select>
+			<div class='methodList divList ui-widget-content ui-corner-all' tabindex=0></div>
+			<select class='implList'></select>
+		</div>
+	</div>
+	<div class='editArea' tabindex=0>
+	</div>
+</div>

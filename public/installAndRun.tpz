@@ -1,0 +1,5 @@
+input $GEMSTONE/examples/www/install.tpz
+run
+(GsSession currentSession userProfile symbolList last at: #'Server') runInForeground.
+%
+

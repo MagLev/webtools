@@ -1,0 +1,78 @@
+<script type="text/javascript" language="javascript"> 
+//<![CDATA[ 
+(function() {
+	var	$tabPanel
+	;
+	GemStone.addTab({
+		id:		'newTab'
+	,	label:	'SPC'
+	,	title:	'Shared Page Cache'
+	,	onAdd:	onAdd
+	});
+	return;
+
+	function onAdd(tabPanel) {
+		$tabPanel = tabPanel;
+		GemStone.ajax('GET', 'SharedPageCache', null, gotData);
+	}
+	
+	function gotData(data) {
+		var min = 1;
+		$('.pageTypes .objectTable', 	$tabPanel).css('width', Math.max(data.objectTable, min) + '%');
+		$('.pageTypes .objectTable', 	$tabPanel).text(data.objectTable);
+		$('.pageTypes .bitmap', 		$tabPanel).css('width', Math.max(data.bitmap, min) + '%');
+		$('.pageTypes .bitmap', 		$tabPanel).text(data.bitmap);
+		$('.pageTypes .commitRecord', 	$tabPanel).css('width', Math.max(data.commitRecord, min) + '%');
+		$('.pageTypes .commitRecord', 	$tabPanel).text(data.commitRecord);
+		$('.pageTypes .other', 			$tabPanel).css('width', Math.max(data.other, min) + '%');
+		$('.pageTypes .other', 			$tabPanel).text(data.other);
+		$('.pageTypes .data', 			$tabPanel).css('width', Math.max(data.data, min) + '%');
+		$('.pageTypes .data', 			$tabPanel).text(data.data);
+		$('.frameState .globalDirty', 	$tabPanel).css('width', Math.max(data.globalDirty, min) + '%');
+		$('.frameState .globalDirty', 	$tabPanel).text(data.globalDirty);
+		$('.frameState .localDirty', 	$tabPanel).css('width', Math.max(data.localDirty, min) + '%');
+		$('.frameState .localDirty', 	$tabPanel).text(data.localDirty);
+		$('.frameState .clean', 		$tabPanel).css('width', Math.max(data.clean, min) + '%');
+		$('.frameState .clean', 		$tabPanel).text(data.clean);
+		$('.frameState .free', 			$tabPanel).css('width', Math.max(data.free - 5, min) + '%');
+		$('.frameState .free', 			$tabPanel).text(data.free);
+	}
+}())
+//]]> 
+</script> 
+
+<div id='newTab' class='spcPanel hidden'>
+	<div id='spcPanelOnce' class='once'>
+		<style type="text/css">
+.spcPanel .pageTypes { height: 2em; width: 100%; }
+.spcPanel .pageTypes div { display: inline-block; }
+.spcPanel .pageTypes .objectTable { background: Wheat; height: 100%; width: 15%; }
+.spcPanel .pageTypes .bitmap { background: Blue; height: 100%; width: 15%; }
+.spcPanel .pageTypes .commitRecord { background: Red; height: 100%; width: 15%; }
+.spcPanel .pageTypes .other { background: CadetBlue; height: 100%; width: 15%; }
+.spcPanel .pageTypes .data { background: Green; height: 100%; width: 15%; }
+.spcPanel .frameState { height: 2em; width: 100%; }
+.spcPanel .frameState div { display: inline-block; }
+.spcPanel .frameState .globalDirty { background: Orange; height: 100%; width: 25%; }
+.spcPanel .frameState .localDirty { background: Salmon; height: 100%; width: 25%; }
+.spcPanel .frameState .clean { background: GreenYellow; height: 100%; width: 25%; }
+.spcPanel .frameState .free { background: Beige; height: 100%; width: 25%; }
+		</style>
+	</div>
+	<div>Types of pages in Shared Page Cache</div>
+	<div class='pageTypes'>
+		<div class='objectTable' title='% frames with Object Table Pages'>&nbsp</div>
+		<div class='bitmap' title='% frames with Bitmap Pages'>&nbsp</div>
+		<div class='commitRecord' title='% frames with Commit Records Pages'>&nbsp</div>
+		<div class='other' title='% frames with Other Pages'>&nbsp</div>
+		<div class='data' title='% frames with Data Pages'>&nbsp</div>
+	</div>
+	<br />
+	<div>State of pages in Shared Page Cache</div>
+	<div class='frameState'>
+		<div class='globalDirty' title='% frames with dirty but not committed pages'>&nbsp</div>
+		<div class='localDirty' title='% frames with dirty committed pages'>&nbsp</div>
+		<div class='clean' title='% frames with clean pages'>&nbsp</div>
+		<div class='free' title='% free frames'>&nbsp</div>
+	</div>
+</div>

@@ -2,10 +2,6 @@ require 'sinatra/base'
 require 'web_tools'
 
 class WebTools::UI < Sinatra::Base
-  use WebTools::Browser
-  use WebTools::Debugger
-  use WebTools::Info
-
   before do
     @location = env["SCRIPT_NAME"]
     @javascripts = %w[
@@ -15,8 +11,16 @@ class WebTools::UI < Sinatra::Base
     @stylesheets = %w[reset.css webtools.css]
   end
 
+  helpers do
+    def static(file) File.read("#{settings.public}/#{file}.html") end
+  end
+
   get '/' do
-    erb :index
+    static :index
+  end
+
+  get '/tools' do
+    Tool.subclasses
   end
 
   get '/browser' do

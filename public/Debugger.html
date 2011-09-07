@@ -1,0 +1,27 @@
+<script type="text/javascript" language="javascript">
+	GemStone.runJs('scripts/Debugger.js', OOP);
+</script> 
+
+<div id='newTab' class='debuggerPanel hidden'>
+	<div class='toolbar'>
+		<button class='into' disabled='disabled'>Into</button>
+		<button class='over' disabled='disabled'>Over</button>
+		<button class='out' disabled='disabled'>Out</button>
+		<button class='go' disabled='disabled'>Go</button>
+		<span class='label'></span>
+	</div>
+	<div class='navigation'>
+		<div class='stack divList'></div>
+		<table class='variables'>
+			<thead><tr>
+				<th>Variable</th>
+				<th>value</th>
+				<th>OOP</th>
+			</tr></thead>
+			<tbody />
+		</table>
+		<textarea class='variableValue'></textarea>
+	</div>
+	<div class='editArea newEditor' tabindex=0>
+	</div>
+</div>

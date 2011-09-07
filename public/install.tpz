@@ -1,0 +1,66 @@
+errorCount
+output push webtools.out only
+errorCount
+ifErr 1 stk
+! ifErr 2 logout
+run
+| name userProfile symbolDictionary |
+name := #'WebTools'.
+userProfile := GsSession currentSession userProfile.
+symbolDictionary := userProfile objectNamed: name.
+symbolDictionary isNil ifTrue: [
+	symbolDictionary := SymbolDictionary new name: name; yourself.
+] ifFalse: [
+	symbolDictionary keys do: [:each | 
+		(symbolDictionary at: each) isClass ifTrue: [
+			symbolDictionary removeKey: each.
+		].
+	].
+].
+userProfile insertDictionary: symbolDictionary at: 1.
+%
+input $GEMSTONE/examples/www/src/StatProcess.gs
+errorCount
+input $GEMSTONE/examples/www/src/StatStatistic.gs
+errorCount
+input $GEMSTONE/examples/www/src/StatProcessType.gs
+errorCount
+input $GEMSTONE/examples/www/src/Statmonitor.gs
+errorCount
+input $GEMSTONE/examples/www/src/Tool.gs
+errorCount
+input $GEMSTONE/examples/www/src/Server.gs
+errorCount
+input $GEMSTONE/examples/www/src/VersionReport.gs
+errorCount
+input $GEMSTONE/examples/www/src/SessionList.gs
+errorCount
+input $GEMSTONE/examples/www/src/CodeBrowser.gs
+errorCount
+input $GEMSTONE/examples/www/src/Statistics.gs
+errorCount
+input $GEMSTONE/examples/www/src/MethodList.gs
+errorCount
+input $GEMSTONE/examples/www/src/Workspace.gs
+errorCount
+input $GEMSTONE/examples/www/src/ObjectLog.gs
+errorCount
+input $GEMSTONE/examples/www/src/Debugger.gs
+errorCount
+input $GEMSTONE/examples/www/src/SharedPageCache.gs
+errorCount
+run
+| symbolList symbolDictionary |
+symbolList := GsSession currentSession userProfile symbolList.
+symbolDictionary := symbolList at: 1.
+symbolList removeAtIndex: 1.
+(symbolList includes: symbolDictionary) ifFalse: [
+	symbolList addLast: symbolDictionary.
+].
+%
+commit
+errorCount
+output pop
+! return from webtools.out
+errorCount
+

@@ -1,0 +1,20 @@
+<script type="text/javascript" language="javascript">
+	GemStone.runJs('scripts/ObjectLog.js');
+</script> 
+
+<div id='newTab' class='objectLogPanel hidden'>
+	<div class='objectLog'>
+		<table>
+			<thead><tr>
+				<th>Timestamp</th>
+				<th>PID</th>
+				<th>Label</th>
+				<th>Type</th>
+				<th>Tag</th>
+				<th>Object</th>
+				<th>Stack</th>
+			</tr></thead>
+			<tbody />
+		</table>
+	</div>
+</div>
