@@ -44,8 +44,7 @@ module WebTools
     end
 
     post '/saveMethod' do
-      dict = Object.find_in_namespace(params["dict"])
-      klass = dict.const_get(params["klass"])
+      klass = Object.find_in_namespace(params["klass"])
       source = params["source"]
       if params["isMeta"] == "true"
         unless source =~ /^\s*def\s+self\./
