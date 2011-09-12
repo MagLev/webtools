@@ -6,7 +6,7 @@ class WebTools::Debugger < WebTools::Tool
     @entry = ObjectLog.to_ary.detect {|o| o.object_id == params["oop"].to_i }
     @process = (@entry.continuation unless @entry.nil?)
   end
-\
+
   get '/' do
     return {} unless @process
     json("label" => @entry.label,

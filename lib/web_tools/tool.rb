@@ -6,6 +6,14 @@ module WebTools
   class Tool < Sinatra::Base
     include WebTools::Support::ServiceHelper
 
+    before do
+      params.each do |k,v|
+        params.delete(k) if v == "null" || v.empty?
+        params[k] = false if v == "false"
+        params[k] = nil if v == "null"
+      end
+    end
+
     class << self
       def inherited(subclass)
         super

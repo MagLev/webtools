@@ -10,7 +10,7 @@ module WebTools
       'Code workspace'
     end
 
-    get '/deleteProcess' do
+    post '/deleteProcess' do
       return {} unless params["oop"]
       ObjectLog.delete(ObjectSpace._id2ref(params["oop"].to_i))
       json({})
@@ -21,11 +21,11 @@ module WebTools
         eval_result = Maglev::Debugger.debug(true) do
           begin
             value = eval(params["text"])
-            result = { "klass" => value.class.name,
+            result = { "klass" => value.class.inspect,
               "string" => value.inspect }
             if value.is_a? Module
               result["dict"] = value.namespace.my_class.to_s
-              result["name"] = value.name
+              result["name"] = value.inspect
               result["cat"]  = ""
             end
             result
@@ -37,13 +37,13 @@ module WebTools
         return json(eval_result)
       rescue Exception => ex
         entry = ::ObjectLog.to_ary.reverse.detect {|e| e.label == ex.message }
-        return json("errorType" => ex.class.name,
+        return json("errorType" => ex.class.inspect,
                     "description" => ex.message,
                     "oop" => entry.object_id)
       end
     end
 
-    get '/saveMethod' do
+    post '/saveMethod' do
       dict = Object.find_in_namespace(params["dict"])
       klass = dict.const_get(params["klass"])
       source = params["source"]

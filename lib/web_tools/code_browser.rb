@@ -11,13 +11,6 @@ module WebTools
       'Browse Namespaces, Classes, and Methods'
     end
 
-    before do
-      params.each do |k,v|
-        params.delete(k) if v == "null"
-        params[k] = false if v == "false"
-      end
-    end
-
     get '/' do # Tool>>json in ST
       json("response" => response_for_class,
            "dictList" => dict_list,
@@ -32,13 +25,13 @@ module WebTools
            "method" => method)
     end
 
-    get '/removeClass' do
+    post '/removeClass' do
       parent = Object.find_in_namespace(params["dict"] || "Object")
       parent.remove_const(params["klass"])
       json({})
     end
 
-    get '/removeMethod' do
+    post '/removeMethod' do
       parent = Object.find_in_namespace(params["dict"] || "Object")
       klass = parent.const_get(params["klass"])
       klass = klass.singleton_class if params["isMeta"]
