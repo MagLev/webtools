@@ -6,9 +6,14 @@ require 'web_tools'
 app = Rack::Builder.new do
   WebTools::UI.set :root, File.expand_path("../..", __FILE__)
   ui = WebTools::UI.new
+  WebTools.constants.each { |c| WebTools.const_get(c) }
+
   redirect = proc { |env| [301,
                     {'Content-Type' => 'text/html', 'Location' => '/webtools/'},
                     '<a href="/webtools">Moved permanently</a>'] }
+  WebTools::Tool.subclasses.each do |cls|
+    map('/webtools/' + cls.display_name) { run cls.new }
+  end
   map('/webtools/') { run ui }
   map('/') { run redirect }
 end

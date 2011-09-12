@@ -3,9 +3,7 @@ require 'web_tools'
 require 'web_tools/support/app_model'
 require 'web_tools/support/service_helper'
 
-class WebTools::Info < Sinatra::Base
-  include WebTools::Support::ServiceHelper
-
+class WebTools::Info < WebTools::Tool
   before do
     @ts = Time.now
     @stack = nil

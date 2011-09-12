@@ -1,22 +1,30 @@
 require 'json/pure' unless defined? JSON
+require 'rack/contrib/jsonp'
 
 module WebTools::Support::ServiceHelper
   def self.included(base)
-    base.set :show_exceptions, true
+    base.set :show_exceptions, false
     base.set :raise_errors, false
+    base.set :method_override, true
+    base.use Rack::JSONP
 
     base.error do
       excep = request.env['sinatra.error']
-      { '_stack' => excep.backtrace.join("<br>") }.to_json
+      json('_stack' => excep.backtrace.join("<br>"),
+           '_error' => excep.message)
     end
-  end
 
-  # Returns a JSON string that contains the data under the "data" key.
-  # Adds other keys (_time, _stack) if appropriate.
-  def prepare_data(data)
-    raise "Expecting Hash" unless Hash === data
-    data['_time'] = ((Time.now - @ts) * 1_000).to_i
-    data['_stack'] = @stack
-    data.to_json
+    base.before do
+      @ts = Time.now
+    end
+
+    base.helpers do
+      def json(obj)
+        content_type :json
+        obj.to_hash.tap do |o|
+          o["_time"] = ((Time.now - @ts) * 1000).to_i
+        end.to_json
+      end
+    end
   end
 end

@@ -8,6 +8,8 @@ class Maglev::System
     #
     class_primitive_nobridge 'current_session_ids', 'currentSessions'
 
+    class_primitive_nobridge 'max_session_id', 'maxSessionId'
+
     # Return the cache process slot number (a SmallInteger) for the given
     # session ID.  The session must be connected to the same shared page
     # cache as the session invoking this method.
@@ -52,6 +54,16 @@ class Maglev::System
     #  must have the SessionAccess privilege.
     #
     class_primitive_nobridge 'description_of_session', 'descriptionOfSession:'
+
+    class_primitive_nobridge 'cache_statistics', 'cacheStatisticsAt:'
+    class_primitive_nobridge 'cache_statistics_description_for_type', 'cacheStatisticsDescriptionForType:'
+
+    begin
+      StatStatistic = __resolve_smalltalk_global(:StatStatistic)
+      class StatStatistic
+        class_primitive_nobridge 'cache_stat_descriptions', 'cacheStatDescriptions'
+      end
+    rescue Exception; end
 end
 
 # The stoneVersionReport returns a StringKeyValueDictionary.
