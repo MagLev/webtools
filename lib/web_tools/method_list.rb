@@ -24,7 +24,7 @@ class WebTools::MethodList < WebTools::Tool
 
   def find_method
     name = non_meta_name(params["klass"])
-    is_meta = (name == params["klass"])
+    is_meta = !(name == params["klass"])
     klass = Object.find_in_namespace(name)
     klass = klass.singleton_class if is_meta
     meth = klass.instance_method(params["selector"])
