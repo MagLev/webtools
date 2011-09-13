@@ -11,5 +11,7 @@ module WebTools
   autoload :MethodList, File.join(path, "method_list.rb")
   autoload :SessionList, File.join(path, "session_list.rb")
   autoload :Workspace, File.join(path, "workspace.rb")
+  autoload :SharedPageCache, File.join(path, "shared_page_cache.rb")
+  autoload :Statistics, File.join(path, "statistics.rb")
   autoload :UI, File.join(path, "ui.rb")
 end
