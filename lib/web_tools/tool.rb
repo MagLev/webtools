@@ -8,9 +8,10 @@ module WebTools
 
     before do
       params.each do |k,v|
-        params.delete(k) if v == "null" || v.empty?
+        params[k] = Rack::Utils.unescape(v)
         params[k] = false if v == "false"
         params[k] = nil if v == "null"
+        params.delete(k) if v == "null" || v.empty?
       end
     end
 
