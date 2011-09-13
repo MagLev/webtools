@@ -19,6 +19,14 @@ module WebTools::Support::ServiceHelper
     end
 
     base.helpers do
+      def non_meta_name(str)
+        if str =~ /^#<Class:.*>$/
+          str["#<Class:".length..-2]
+        else
+          str
+        end
+      end
+
       def json(obj)
         content_type :json
         obj.to_hash.tap do |o|
