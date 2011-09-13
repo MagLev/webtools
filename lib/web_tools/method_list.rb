@@ -23,13 +23,12 @@ class WebTools::MethodList < WebTools::Tool
   end
 
   def find_method
-    return {} unless namespace = Object.find_in_namespace(params["dict"])
     name = params["klass"]
     name = name["#<Class:".length..-2] if is_meta = !!(name =~ /^#<Class:.*>$/)
-    klass = namespace.const_get(name)
+    klass = Object.find_in_namespace(name)
     klass = klass.singleton_class if is_meta
     meth = klass.instance_method(params["selector"])
-    { "dictionaryName" => namespace,
+    { "dictionaryName" => params["dict"],
       "className" => klass.inspect,
       "isMeta" => is_meta,
       "source" => meth.source,
