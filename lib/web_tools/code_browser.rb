@@ -92,7 +92,11 @@ module WebTools
     def super_list
       return [] if @klass.nil?
       if params["superClass"]
-        @super_class = Object.find_in_namespace(params["superClass"])
+        super_class = non_meta_name(params["superClass"])
+        @super_class = Object.find_in_namespace(super_class)
+        if super_class != params["superClass"]
+          @super_class = @super_class.singleton_class
+        end
       else
         @super_class = @klass
       end
@@ -111,14 +115,14 @@ module WebTools
 
     def method
       return nil unless @implementor && @selector
-      @method = @implementor.__gs_method(@selector.to_sym, true)
+      @method = @implementor.instance_method(@selector)
       { "dictionaryName" => "",
         "className" => @klass.inspect,
         "isMeta" => params["isMeta"],
         "category" => "",
-        "source" => @method.__source_string,
-        "stepPoints" => @method.__source_offsets,
-        "sends" => @method.__source_offsets_of_sends }
+        "source" => @method.source,
+        "stepPoints" => @method.step_offsets,
+        "sends" => @method.send_offsets }
     end
 
     def method_list
