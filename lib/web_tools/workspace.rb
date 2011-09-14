@@ -54,12 +54,12 @@ module WebTools
         end
       end
       begin
-        m = klass.compile_method(source)
+        m = klass.compile_method(source, params["selector"])
+        return json({"selector" => m.name, "warnings" => nil})
       rescue SyntaxError => e
         # Magic values taken from a Smalltalk CompileError
         return json("compileError" => [[1031, 1, e.message, nil, nil]])
       end
-      json({"selector" => m.name, "warnings" => nil})
     end
   end
 end
