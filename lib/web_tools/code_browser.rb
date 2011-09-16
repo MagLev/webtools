@@ -136,7 +136,6 @@ module WebTools
         "className" => @klass.inspect,
         "isMeta" => params["isMeta"],
         "category" => "",
-        "selector" => @selector,
         "source" => @method.source,
         "stepPoints" => @method.step_offsets,
         "sends" => @method.send_offsets }

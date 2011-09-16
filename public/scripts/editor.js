@@ -6,7 +6,6 @@ GemStone.saveScript('scripts/editor.js', function(options) {
         ,       isMeta                  = false
         ,       category
         ,       source                  = ''
-        ,       selector                = null
         ,       errorInfo               = {}
         ,       stepPoints
         ,       unmarkFunctions = []
@@ -167,7 +166,6 @@ GemStone.saveScript('scripts/editor.js', function(options) {
                 ,       klass:          className
                 ,       isMeta:         isMeta
                 ,       category:       category
-                ,       selector:       selector
                 ,       source:         editor.getValue()
                 };
                 GemStone.ajax('POST','Workspace/saveMethod', myRequest, onSaveMethod);
@@ -234,7 +232,6 @@ GemStone.saveScript('scripts/editor.js', function(options) {
                 isMeta = data.isMeta;
                 category = data.category;
                 source = data.source ? data.source : '';
-                selector = data.selector;
                 setCodeMode(source);
                 editor.setValue(source);
                 calculateStepPoints(data);
@@ -253,7 +250,6 @@ GemStone.saveScript('scripts/editor.js', function(options) {
                 isMeta = null;
                 category = null;
                 source = aString;
-                selector = null;
                 setCodeMode(source);
                 editor.setValue(source);
         }
