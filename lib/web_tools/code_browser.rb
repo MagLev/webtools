@@ -14,8 +14,8 @@ module WebTools
     get '/' do # Tool>>json in ST
       json("response" => response_for_class,
            "dictList" => dict_list,
-           "packageList" => ["no packages"],
-           "classCatList" => ["undefined"],
+           "packageList" => [],
+           "classCatList" => class_cat_list,
            "classList" => class_list,
            "classDef" => "",
            "superList" => super_list,
@@ -67,12 +67,29 @@ module WebTools
     end
 
     def dict_list
+      return [] unless params['isDictsTab']
+      pkgs = ["Object"]
+      Object.constants.each do |const|
+        unless autoload?(const)
+          k = Object.const_get(const)
+          pkgs << k.inspect if k === Module && k.constants.any? {|c| c === Module}
+        end
+        @dict = k if @dict.nil? && params['dict'] == k.inspect
+      end
+      pkgs.compact.uniq.sort
+    end
+
+    def class_cat_list
       names = []
-      Object.each_module do |klass|
-        if klass.namespace.nil? || klass.namespace.my_class == Object
-          names << klass.inspect
+      filter = (@dict || @package || Object)
+      filter.each_module do |klass|
+        path = klass.inspect.gsub("::", "-")
+        names << path
+        if @class_category.nil? && params['classCat'] == path
+          @class_category = klass
         end
       end
+      @class_category ||= filter
       names.compact.uniq.sort
     end
 
@@ -84,8 +101,7 @@ module WebTools
       @klass = Object.find_in_namespace(params["klass"]) if params["klass"]
       @klass = @klass.singleton_class if @klass && params["isMeta"]
       names = []
-      dict = Object.find_in_namespace(params["dict"]) if params["dict"]
-      (dict || Object).each_module { |klass|  names << klass.inspect }
+      @class_category.each_module { |klass|  names << klass.inspect }
       names.sort
     end
 
