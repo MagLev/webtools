@@ -26,6 +26,8 @@ GemStone = function() {	//	hide everything inside an anonymous function to isola
 	,	runJsOnce:	runJsOnce	//	run a script only if not yet run
 	,	saveScript:	saveScript	//	cache function to reuse without reloading
 	,	scroll:		scroll		//	add scrolling to a table
+	,	encodeHTML:	encodeHTML	//	escape for HTML display
+	,	decodeHTML:	decodeHTML	//	unescape HTML code
 	}
 
 	function onDocumentReady() {
@@ -300,6 +302,14 @@ GemStone = function() {	//	hide everything inside an anonymous function to isola
 			$('.tableBody caption', $div).remove();
 			$div.addClass('scrollingTable');
 		}
+	}
+
+	function encodeHTML(string) {
+		return $('<div/>').text(string).html();
+	}
+
+	function decodeHTML(string) {
+		return $('<div/>').html(string).text();
 	}
 	
 	function resize() {
