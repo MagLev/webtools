@@ -18,7 +18,7 @@ module WebTools
 
     post '/evaluate' do
       begin
-        eval_result = Maglev::Debugger.debug(true) do
+        eval_result = Maglev::Debugger.debug do
           begin
             value = eval(params["text"])
             result = { "klass" => value.class.inspect,
