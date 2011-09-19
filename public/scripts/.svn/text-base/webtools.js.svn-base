@@ -271,7 +271,7 @@ GemStone = function() {	//	hide everything inside an anonymous function to isola
 			runJsOnce(src, almostDone);
 		}
 		return;
-		
+	}	
 		function almostDone() {
 			if (typeof scripts[src] === 'function') {
 				result = scripts[src](args);
@@ -337,7 +337,6 @@ GemStone = function() {	//	hide everything inside an anonymous function to isola
 			}
 			$('thead', $body).addClass('hide');
 			$body.parent().css('top', $header.outerHeight() - 3 + 'px');
-			$body.
 			return;
 			
 			function clearWidths($element) {

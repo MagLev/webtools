@@ -1,7 +1,7 @@
 10
 
 dir
-26738
+26844
 https://svn.gemstone.com/repos/smalltalk/server/64bit/trunk/examples/www/flot
 https://svn.gemstone.com/repos/smalltalk
 
@@ -502,14 +502,14 @@ has-props
 
 3532
 
-jquery.colorhelpers.min.js
+jquery.min.js
 file
 
 
 
 
 2011-09-07T18:22:35.223869Z
-aee911748a705266fa115209ca39b444
+ee53f3a05f4ea161a7a2b073f7ed80b4
 2011-09-02T22:10:36.677956Z
 26717
 jfoster
@@ -534,7 +534,7 @@ has-props
 
 
 
-2952
+94404
 
 jquery.flot.navigate.min.js
 file
@@ -570,14 +570,14 @@ has-props
 
 5205
 
-jquery.min.js
+jquery.colorhelpers.min.js
 file
 
 
 
 
 2011-09-07T18:22:35.223869Z
-ee53f3a05f4ea161a7a2b073f7ed80b4
+aee911748a705266fa115209ca39b444
 2011-09-02T22:10:36.677956Z
 26717
 jfoster
@@ -602,7 +602,7 @@ has-props
 
 
 
-94404
+2952
 
 Makefile
 file
@@ -672,40 +672,6 @@ jfoster
 
 1370
 
-jquery.flot.stack.min.js
-file
-
-
-
-
-2011-09-07T18:22:35.223869Z
-73bfeaddbc43e8253f3a1f513bb09af3
-2011-09-02T22:10:36.677956Z
-26717
-jfoster
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1357
-
 excanvas.js
 file
 
@@ -739,6 +705,40 @@ has-props
 
 
 41784
+
+jquery.flot.stack.min.js
+file
+
+
+
+
+2011-09-07T18:22:35.223869Z
+73bfeaddbc43e8253f3a1f513bb09af3
+2011-09-02T22:10:36.677956Z
+26717
+jfoster
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1357
 
 API.txt
 file
@@ -876,40 +876,6 @@ has-props
 
 21681
 
-jquery.flot.resize.js
-file
-
-
-
-
-2011-09-07T18:22:35.233897Z
-38bdb8560552d6b97a50c6eda034eb90
-2011-09-02T22:10:36.677956Z
-26717
-jfoster
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2458
-
 jquery.flot.js
 file
 
@@ -943,6 +909,40 @@ has-props
 
 
 106797
+
+jquery.flot.resize.js
+file
+
+
+
+
+2011-09-07T18:22:35.233897Z
+38bdb8560552d6b97a50c6eda034eb90
+2011-09-02T22:10:36.677956Z
+26717
+jfoster
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2458
 
 LICENSE.txt
 file

@@ -1,7 +1,7 @@
 10
 
 dir
-26738
+26844
 https://svn.gemstone.com/repos/smalltalk/server/64bit/trunk/examples/www/css
 https://svn.gemstone.com/repos/smalltalk
 
@@ -267,40 +267,6 @@ has-props
 
 1642
 
-more.gif
-file
-
-
-
-
-2011-09-07T18:22:34.933935Z
-4680f00c53af70bb3d82c8935b35e879
-2011-08-15T16:21:24.595574Z
-26419
-jfoster
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-830
-
 SessionList.css
 file
 
@@ -334,6 +300,40 @@ has-props
 
 
 441
+
+more.gif
+file
+
+
+
+
+2011-09-07T18:22:34.933935Z
+4680f00c53af70bb3d82c8935b35e879
+2011-08-15T16:21:24.595574Z
+26419
+jfoster
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+830
 
 reset.css
 file
@@ -372,6 +372,9 @@ has-props
 base
 dir
 
+ui-lightness
+dir
+
 Debugger.css
 file
 
@@ -405,9 +408,6 @@ has-props
 
 
 1077
-
-ui-lightness
-dir
 
 editor.css
 file

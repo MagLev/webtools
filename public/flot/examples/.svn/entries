@@ -1,7 +1,7 @@
 10
 
 dir
-26738
+26844
 https://svn.gemstone.com/repos/smalltalk/server/64bit/trunk/examples/www/flot/examples
 https://svn.gemstone.com/repos/smalltalk
 
@@ -536,17 +536,18 @@ has-props
 
 177
 
-pie.html
+arrow-up.gif
 file
 
 
 
 
 2011-09-07T18:22:35.213871Z
-47a36b2c5337be6489f925c69f062c39
-2011-09-02T22:10:36.677956Z
-26717
+1df14a1540fcb367714a326e30b668e7
+2010-10-14T20:46:36.057381Z
+24469
 jfoster
+has-props
 
 
 
@@ -567,8 +568,7 @@ jfoster
 
 
 
-
-41504
+916
 
 percentiles.html
 file
@@ -604,18 +604,17 @@ jfoster
 
 7047
 
-arrow-up.gif
+pie.html
 file
 
 
 
 
 2011-09-07T18:22:35.213871Z
-1df14a1540fcb367714a326e30b668e7
-2010-10-14T20:46:36.057381Z
-24469
+47a36b2c5337be6489f925c69f062c39
+2011-09-02T22:10:36.677956Z
+26717
 jfoster
-has-props
 
 
 
@@ -636,7 +635,8 @@ has-props
 
 
 
-916
+
+41504
 
 turning-series.html
 file
@@ -672,40 +672,6 @@ has-props
 
 4826
 
-image.html
-file
-
-
-
-
-2011-09-07T18:22:35.223869Z
-701fb9a5d2b9e675798c7fa69500b6f4
-2011-09-02T22:10:36.677956Z
-26717
-jfoster
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1860
-
 zooming.html
 file
 
@@ -739,6 +705,40 @@ has-props
 
 
 3409
+
+image.html
+file
+
+
+
+
+2011-09-07T18:22:35.223869Z
+701fb9a5d2b9e675798c7fa69500b6f4
+2011-09-02T22:10:36.677956Z
+26717
+jfoster
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1860
 
 ajax.html
 file
@@ -944,40 +944,6 @@ has-props
 
 916
 
-resize.html
-file
-
-
-
-
-2011-09-07T18:22:35.223869Z
-c4182e8a729225b64747d25ed358899b
-2011-09-02T22:10:36.677956Z
-26717
-jfoster
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2077
-
 layout.css
 file
 
@@ -1012,18 +978,17 @@ has-props
 
 91
 
-annotating.html
+resize.html
 file
 
 
 
 
 2011-09-07T18:22:35.223869Z
-46314ba54ac8ac351c3caf2b5848206f
+c4182e8a729225b64747d25ed358899b
 2011-09-02T22:10:36.677956Z
 26717
 jfoster
-has-props
 
 
 
@@ -1044,7 +1009,8 @@ has-props
 
 
 
-2749
+
+2077
 
 tracking.html
 file
@@ -1079,6 +1045,40 @@ has-props
 
 
 3368
+
+annotating.html
+file
+
+
+
+
+2011-09-07T18:22:35.223869Z
+46314ba54ac8ac351c3caf2b5848206f
+2011-09-02T22:10:36.677956Z
+26717
+jfoster
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2749
 
 realtime.html
 file

@@ -1,7 +1,7 @@
 10
 
 dir
-26738
+26844
 https://svn.gemstone.com/repos/smalltalk/server/64bit/trunk/examples/www/css/base
 https://svn.gemstone.com/repos/smalltalk
 
@@ -60,40 +60,6 @@ has-props
 
 1182
 
-jquery.ui.autocomplete.css
-file
-
-
-
-
-2011-09-07T18:22:34.883869Z
-a1a1896a3a15b30b0049a569c6c0fff4
-2010-10-14T20:46:36.057381Z
-24469
-jfoster
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-833
-
 jquery.ui.accordion.css
 file
 
@@ -127,6 +93,40 @@ has-props
 
 
 887
+
+jquery.ui.autocomplete.css
+file
+
+
+
+
+2011-09-07T18:22:34.883869Z
+a1a1896a3a15b30b0049a569c6c0fff4
+2010-10-14T20:46:36.057381Z
+24469
+jfoster
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+833
 
 jquery.ui.theme.css
 file
@@ -264,40 +264,6 @@ has-props
 
 427
 
-jquery.ui.datepicker.css
-file
-
-
-
-
-2011-09-07T18:22:34.883869Z
-5d1af24ebb879d437ad5518f2180894d
-2010-10-14T20:46:36.057381Z
-24469
-jfoster
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3844
-
 jquery.ui.button.css
 file
 
@@ -331,6 +297,40 @@ has-props
 
 
 1937
+
+jquery.ui.datepicker.css
+file
+
+
+
+
+2011-09-07T18:22:34.883869Z
+5d1af24ebb879d437ad5518f2180894d
+2010-10-14T20:46:36.057381Z
+24469
+jfoster
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3844
 
 jquery.ui.resizable.css
 file
@@ -437,40 +437,6 @@ has-props
 
 1352
 
-jquery.ui.tabs.css
-file
-
-
-
-
-2011-09-07T18:22:34.883869Z
-09e43d1292df09b412447d2a1c11b776
-2010-10-14T20:46:36.057381Z
-24469
-jfoster
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1202
-
 jquery.ui.progressbar.css
 file
 
@@ -504,4 +470,38 @@ has-props
 
 
 169
+
+jquery.ui.tabs.css
+file
+
+
+
+
+2011-09-07T18:22:34.883869Z
+09e43d1292df09b412447d2a1c11b776
+2010-10-14T20:46:36.057381Z
+24469
+jfoster
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1202
 
