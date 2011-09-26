@@ -273,7 +273,7 @@ GemStone = function() {	//	hide everything inside an anonymous function to isola
 			runJsOnce(src, almostDone);
 		}
 		return;
-	}	
+
 		function almostDone() {
 			if (typeof scripts[src] === 'function') {
 				result = scripts[src](args);
