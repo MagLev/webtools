@@ -15,6 +15,7 @@ GemStone.saveScript('scripts/Debugger.js', function(oop) {
 	function onAdd(tabPanel) {
 		$tabPanel = tabPanel;
 		setupEditor();
+		$('button.restart', $tabPanel).click(function() { restart(); });
 		$('button.into', $tabPanel).click(function() { step(-1); });
 		$('button.over', $tabPanel).click(function() { step(0 ); });
 		$('button.out', $tabPanel).click( function() { step(1 ); });
@@ -112,6 +113,14 @@ GemStone.saveScript('scripts/Debugger.js', function(oop) {
 	
 	function go() {
 		GemStone.ajax('POST', 'Debugger/go', { oop: oop }, didGo);
+	}
+
+	function restart() {
+		 var myRequest = {
+				oop: oop
+			,	frame: selectedFrame()
+			};
+		 GemStone.ajax('POST', 'Debugger/restart', myRequest, didStep);
 	}
 
 	function didStep(data) {

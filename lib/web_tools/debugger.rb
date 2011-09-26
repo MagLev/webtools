@@ -46,6 +46,19 @@ class WebTools::Debugger < WebTools::Tool
     json("foo" => "bar")
   end
 
+  post '/restart' do
+    return {} unless @process
+    frame = @process.stack[params["frame"].to_i - 1]
+    return {} if frame.nil?
+    frame.restart
+    new_frame = @process.stack.first
+
+    json("label" => @entry.label,
+         "stack" => @process.report,
+         "method" => method_data_from_frame(new_frame),
+         "variables" => variables_data_from_frame(new_frame))
+  end
+
   def method_data_from_frame(frame)
     if frame.method.in_class.namespace
       dict = frame.method.in_class.namespace.my_class.name
