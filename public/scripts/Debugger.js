@@ -53,6 +53,7 @@ GemStone.saveScript('scripts/Debugger.js', function(oop) {
 		$('.stack', $tabPanel).scrollTop(0);
 		$('.stack .clickable', $tabPanel).click(clickedOnFrame);
 		$('.variableValue', $tabPanel).text('');
+		$('.stack .clickable', $tabPanel).first().click();
 	}
 	
 	function clickedOnFrame() {
