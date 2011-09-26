@@ -18,7 +18,7 @@ GemStone.saveScript('scripts/Debugger.js', function(oop) {
 		$('button.into', $tabPanel).click(function() { step(-1); });
 		$('button.over', $tabPanel).click(function() { step(0 ); });
 		$('button.out', $tabPanel).click( function() { step(1 ); });
-		$('button.go', $tabPanel).click(  function() { step(  ); });
+		$('button.go', $tabPanel).click(  function() { go(  ); });
 		GemStone.ajax('GET','Debugger', { oop: oop }, gotData);
 	}
 	
@@ -103,16 +103,25 @@ GemStone.saveScript('scripts/Debugger.js', function(oop) {
 	}
 	
 	function step(anInteger) {
-		$('button', $tabPanel).attr('disabled','disabled');
 		var myRequest = {
 				oop: oop
 			,	level: typeof anInteger === 'number' ? selectedFrame() + anInteger : null
 			};
 		GemStone.ajax('POST', 'Debugger/step', myRequest, didStep);
 	}
+	
+	function go() {
+		GemStone.ajax('POST', 'Debugger/go', { oop: oop }, didGo);
+	}
 
 	function didStep(data) {
 		console.log(data);
+		gotData(data); // will return early if no stack change
+		gotFrame(data);
+	}
+
+	function didGo(data) {
+		 console.log(data);
 	}
 	
 });
