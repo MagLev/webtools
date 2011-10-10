@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 77
-/repos/smalltalk/!svn/ver/26263/server/64bit/trunk/examples/www/CodeMirror/js
+/repos/smalltalk/!svn/ver/26910/server/64bit/trunk/examples/www/CodeMirror/js
 END
 smalltalk.js
 K 25
@@ -14,4 +14,10 @@ K 25
 svn:wc:ra_dav:version-url
 V 91
 /repos/smalltalk/!svn/ver/26263/server/64bit/trunk/examples/www/CodeMirror/js/codemirror.js
+END
+ruby.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/repos/smalltalk/!svn/ver/26910/server/64bit/trunk/examples/www/CodeMirror/js/ruby.js
 END

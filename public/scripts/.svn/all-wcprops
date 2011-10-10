@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 71
-/repos/smalltalk/!svn/ver/26816/server/64bit/trunk/examples/www/scripts
+/repos/smalltalk/!svn/ver/26909/server/64bit/trunk/examples/www/scripts
 END
 Debugger.js
 K 25
@@ -13,7 +13,7 @@ editor.js
 K 25
 svn:wc:ra_dav:version-url
 V 81
-/repos/smalltalk/!svn/ver/26577/server/64bit/trunk/examples/www/scripts/editor.js
+/repos/smalltalk/!svn/ver/26909/server/64bit/trunk/examples/www/scripts/editor.js
 END
 ObjectLog.js
 K 25
@@ -31,7 +31,7 @@ Statistics.js
 K 25
 svn:wc:ra_dav:version-url
 V 85
-/repos/smalltalk/!svn/ver/26716/server/64bit/trunk/examples/www/scripts/Statistics.js
+/repos/smalltalk/!svn/ver/26909/server/64bit/trunk/examples/www/scripts/Statistics.js
 END
 jquery-ui.js
 K 25
@@ -43,7 +43,7 @@ MethodList.js
 K 25
 svn:wc:ra_dav:version-url
 V 85
-/repos/smalltalk/!svn/ver/26577/server/64bit/trunk/examples/www/scripts/MethodList.js
+/repos/smalltalk/!svn/ver/26909/server/64bit/trunk/examples/www/scripts/MethodList.js
 END
 CodeBrowser.js
 K 25
@@ -55,7 +55,7 @@ webtools.js
 K 25
 svn:wc:ra_dav:version-url
 V 83
-/repos/smalltalk/!svn/ver/26816/server/64bit/trunk/examples/www/scripts/webtools.js
+/repos/smalltalk/!svn/ver/26909/server/64bit/trunk/examples/www/scripts/webtools.js
 END
 SessionList.js
 K 25
