@@ -25,8 +25,15 @@ class WebTools::Debugger < WebTools::Tool
     return {} unless @process
     steplevel = params["level"].to_i
     stacksize = @process.stack.size
-    @process.step(steplevel)
-    frame = @process.stack.first
+
+    begin
+      if params["level"]
+        @process.step(steplevel)
+      else
+        Maglev::Debugger.debug_log_entry(@entry)
+      end
+    rescue Exception
+    end
 
     data = { "label" => @entry.label,
       "method" => method_data_from_frame(frame),
@@ -36,14 +43,6 @@ class WebTools::Debugger < WebTools::Tool
     end
 
     json(data)
-  end
-
-  post '/go' do
-    return {} unless @process
-    Thread.start do
-      Maglev::Debugger.debug_log_entry(@entry)
-    end
-    json("foo" => "bar")
   end
 
   post '/restart' do
