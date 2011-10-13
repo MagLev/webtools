@@ -26,64 +26,61 @@ module WebTools
     end
 
     post '/removeClass' do
-      parent = Object.find_in_namespace(params["dict"] || "Object")
-      parent.remove_const(params["klass"])
+      parent = reflect(Object).constant(params["dict"] || "Object").value
+      parent.constant(params["klass"]).delete
       json({})
     end
 
     post '/removeMethod' do
-      parent = Object.find_in_namespace(params["dict"] || "Object")
-      klass = parent.const_get(params["klass"])
+      parent = reflect(Object).constant(params["dict"] || "Object").value
+      klass = parent.constant(params["klass"]).value
       klass = klass.singleton_class if params["isMeta"]
-      klass.remove_method(params["name"].to_sym)
+      klass.method(params["name"]).delete
       json({})
     end
 
     def response_for_class
-      return nil if params["selector"]
-      return nil unless params["request"]
-      begin
-        result = eval(params["request"])
-        if result.is_a? Module
-          return nil unless result.namespace
-          response = { "dict" => result.namespace.my_class.inspect,
-            "classCat" => nil,
-            "klass" => result.inspect,
-            "isMeta" => false,
-            "superClass" => result.inspect,
-            "methodCat" => nil,
-            "selector" => nil,
-            "implementor" => nil,
-            "action" => "klass" }
-          response.each {|k,v| params[k] = v }
-          response
-        else
-          nil
-        end
-      rescue Exception => e
-        { "action" => "klass",
-          "error" => [e.class.inspect, e.message] }
-      end
+      # return nil if params["selector"]
+      # return nil unless params["request"]
+      # begin
+      #   result = eval(params["request"])
+      #   if result.is_a? Module
+      #     return nil unless result.namespace
+      #     response = { "dict" => result.namespace.my_class.inspect,
+      #       "classCat" => nil,
+      #       "klass" => result.inspect,
+      #       "isMeta" => false,
+      #       "superClass" => result.inspect,
+      #       "methodCat" => nil,
+      #       "selector" => nil,
+      #       "implementor" => nil,
+      #       "action" => "klass" }
+      #     response.each {|k,v| params[k] = v }
+      #     response
+      #   else
+      #     nil
+      #   end
+      # rescue Exception => e
+      #   { "action" => "klass",
+      #     "error" => [e.class.inspect, e.message] }
+      # end
     end
 
     def dict_list
       return [] unless params['isDictsTab']
       pkgs = ["Object"]
-      Object.constants.each do |const|
-        unless autoload?(const)
-          k = Object.const_get(const)
-          pkgs << k.inspect if k === Module && k.constants.any? {|c| c === Module}
-        end
-        @dict = k if @dict.nil? && params['dict'] == k.inspect
+      reflect(Object).nested_classes.each do |k|
+        pkgs << k.name if k.nested_classes.any?
+        @dict = k if @dict.nil? && params['dict'] == k.name
       end
       pkgs.compact.uniq.sort
     end
 
     def class_cat_list
       names = []
-      filter = (@dict || @package || Object)
-      filter.each_module do |klass|
-        path = klass.inspect.gsub("::", "-")
+      filter = (@dict || @package || reflect(Object))
+      filter.nested_classes do |klass|
+        path = klass.name.gsub("::", "-")
         names << path
         if @class_category.nil? && params['classCat'] == path
           @class_category = klass
@@ -98,18 +95,16 @@ module WebTools
     # @return [Array] sorted list of class and module names found in the Ruby
     #         namespace hierarchy.
     def class_list
-      @klass = Object.find_in_namespace(params["klass"]) if params["klass"]
+      @klass = reflect(Object).constant(params["klass"]).value if params["klass"]
       @klass = @klass.singleton_class if @klass && params["isMeta"]
-      names = []
-      @class_category.each_module { |klass|  names << klass.inspect }
-      names.sort
+      @class_category.nested_classes.collect(&:name).sort
     end
 
     def super_list
       return [] if @klass.nil?
       if params["superClass"]
         super_class = non_meta_name(params["superClass"])
-        @super_class = Object.find_in_namespace(super_class)
+        @super_class = reflect(Object).constant(super_class).value
         if super_class != params["superClass"]
           @super_class = @super_class.singleton_class
         end
@@ -117,23 +112,25 @@ module WebTools
         @super_class = @klass
       end
       @super_list = @klass.ancestors.reverse
+      @super_list.collect(&:name)
     end
 
     def implementor_list
       selected = params["implementor"]
       return [] if @super_list.nil? || @super_list.empty?
       list = @super_list.select do |c|
-        c.instance_methods(false).include?(@selector)
+        c.methods.include?(@selector)
       end
-      @implementor = list.detect {|e| e.inspect == selected } || @klass
+      @implementor = list.detect {|e| e.name == selected } || @klass
       list.collect(&:name)
     end
 
     def method
       return nil unless @implementor && @selector
-      @method = @implementor.instance_method(@selector)
+      nil.pause if Module === @implementor
+      @method = @implementor.method(@selector)
       { "dictionaryName" => "",
-        "className" => @klass.inspect,
+        "className" => @klass.name,
         "isMeta" => params["isMeta"],
         "category" => "",
         "source" => @method.source,
@@ -144,7 +141,7 @@ module WebTools
     def method_list
       selected = params["selector"]
       return [] if @super_list.nil? || @super_list.empty?
-      list = @super_class.instance_methods(false)
+      list = @super_class.methods
       @selector = selected if list.include? selected
       list.sort
     end

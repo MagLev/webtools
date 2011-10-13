@@ -33,6 +33,14 @@ module WebTools::Support::ServiceHelper
           o["_time"] = ((Time.now - @ts) * 1000).to_i
         end.to_json
       end
+
+      def reflect(obj)
+        system.reflect_object(obj)
+      end
+
+      def system
+        @reflection ||= Maglev::Reflection.new(nil)
+      end
     end
   end
 end
