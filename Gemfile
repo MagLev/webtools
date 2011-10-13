@@ -3,3 +3,5 @@
 
 source "http://rubygems.org"
 gemspec :development_group => :dev
+
+gem "rubymirrors", :git => "https://github.com/timfel/rubymirrors.git"
