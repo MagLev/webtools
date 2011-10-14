@@ -25,11 +25,11 @@ class WebTools::MethodList < WebTools::Tool
   def find_method
     name = non_meta_name(params["klass"])
     is_meta = !(name == params["klass"])
-    klass = Object.find_in_namespace(name)
+    klass = reflect(Object).constant(name).value
     klass = klass.singleton_class if is_meta
-    meth = klass.instance_method(params["selector"])
+    meth = klass.method(params["selector"])
     { "dictionaryName" => params["dict"],
-      "className" => klass.inspect,
+      "className" => klass.name,
       "isMeta" => is_meta,
       "source" => meth.source,
       "stepPoints" => meth.step_offsets,
@@ -38,12 +38,12 @@ class WebTools::MethodList < WebTools::Tool
 
   def implementors
     return {} unless params["find"]
-    methods(params["find"].implementors)
+    methods(system.implementations_of(params["find"]))
   end
 
   def senders
     return {} unless params["find"]
-    methods(params["find"].senders)
+    methods(system.senders_of(params["find"]))
   end
 
   def references_to_global
@@ -52,14 +52,14 @@ class WebTools::MethodList < WebTools::Tool
 
   def methods(list)
     list = list.collect do |meth|
-      klass = meth.in_class
-      namespace = klass.namespace
-      dict = namespace.my_class.inspect if namespace
-      { "dict" => dict || "",
+      klass = meth.defining_class
+      nesting = klass.nesting
+      dict = nesting[1] ? nesting[1].name : "" # [klass, parent, ...]
+      { "dict" => dict,
         "klassCat" => "",
-        "klass" => klass.inspect,
+        "klass" => klass.name,
         "category" => "",
-        "selector" => meth.name }
+        "selector" => meth.selector }
     end
     { "list" => list }
   end
