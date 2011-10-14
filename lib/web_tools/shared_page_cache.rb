@@ -9,7 +9,10 @@ class WebTools::SharedPageCache < WebTools::Tool
   end
 
   get '/' do
-    stats = Maglev::System.cache_statistics(1, true).flatten.last
+    values = Maglev::System.cache_statistics(0) # SPC Monitor
+    descrs = Maglev::System.cache_statistics_description_for_type(values[3])
+
+    stats = Hash[descrs.zip(values)]
     size = stats["FrameCount"].to_f
     free = stats["FreeFrameCount"]
     globalDirty = stats["GlobalDirtyPageCount"]
