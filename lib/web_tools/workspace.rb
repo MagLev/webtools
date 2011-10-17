@@ -1,7 +1,5 @@
 require 'sinatra/base'
 require 'web_tools'
-require 'ruby/reflection'
-# require 'maglev/debugger'
 
 module WebTools
   class Workspace < Tool
@@ -10,41 +8,46 @@ module WebTools
       'Code workspace'
     end
 
-    post '/deleteProcess' do
-      return {} unless params["oop"]
-      ObjectLog.delete(ObjectSpace._id2ref(params["oop"].to_i))
-      json({})
-    end
+    # post '/deleteProcess' do
+    #   return {} unless params["oop"]
+    #   ObjectLog.delete(ObjectSpace._id2ref(params["oop"].to_i))
+    #   json({})
+    # end
 
     post '/evaluate' do
-      begin
-        eval_result = Maglev::Debugger.debug do
-          begin
-            value = eval(params["text"])
-            result = { "klass" => value.class.inspect,
-              "string" => value.inspect }
-            if value.is_a? Module
-              result["dict"] = value.namespace.my_class.to_s
-              result["name"] = value.inspect
-              result["cat"]  = ""
-            end
-            result
-          rescue SyntaxError => e
-            { "errorType" => "compileError",
-              "errorDetails" => [[1031, 1, e.message, nil, nil]] }
+      eval_thread = Thread.new do
+        begin
+          value = eval(params["text"])
+          result = { "klass" => value.class.inspect,
+            "string" => value.inspect }
+          if value.is_a? Module
+            result["dict"] = ""
+            result["name"] = value.inspect
+            result["cat"]  = ""
           end
+          return result
+        rescue SyntaxError => e
+          return { "errorType" => "compileError",
+            "errorDetails" => [[1031, 1, e.message, nil, nil]] }
+        rescue Exception => e
+          Thread.current[:error] = e
+          Thread.current[:copy] = reflect(Thread.current).copy_active_thread
+          return Thread.current
         end
-        return json(eval_result)
-      rescue Exception => ex
-        entry = ::ObjectLog.to_ary.reverse.detect {|e| e.label == ex.message }
-        return json("errorType" => ex.class.inspect,
-                    "description" => ex.message,
-                    "oop" => entry.object_id)
+      end
+      eval_thread.join
+      m = reflect(eval_thread)
+      if (rval = m.return_value) == eval_thread
+        json("errorType" => eval_thread[:error].class.inspect,
+             "description" => eval_thread[:error].message,
+             "oop" => eval_thread[:copy].object_id)
+      else
+        json(rval)
       end
     end
 
     post '/saveMethod' do
-      klass = Object.find_in_namespace(params["klass"])
+      klass = reflect(Object).constant(params["klass"])
       source = params["source"]
       if params["isMeta"] == "true"
         unless source =~ /^\s*def\s+self\./
@@ -54,7 +57,7 @@ module WebTools
         end
       end
       begin
-        m = klass.compile_method(source, params["selector"])
+        klass.method(params["selector"]).source = source
         return json({"selector" => m.name, "warnings" => nil})
       rescue SyntaxError => e
         # Magic values taken from a Smalltalk CompileError
