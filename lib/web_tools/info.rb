@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'web_tools'
-# require 'web_tools/support/app_model'
-# require 'web_tools/support/service_helper'
+require 'web_tools/support/app_model'
+require 'web_tools/support/service_helper'
 
 class WebTools::Info < WebTools::Tool
   before do

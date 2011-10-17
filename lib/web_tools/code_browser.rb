@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'ruby/reflection'
 require 'web_tools'
 require 'web_tools/support/code_browser'
 require 'web_tools/support/service_helper'

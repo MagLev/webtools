@@ -1,4 +1,3 @@
-# require 'maglev/method_source'
 module WebTools
   module Support
     # Provide information about the Ruby environment
