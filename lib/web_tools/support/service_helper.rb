@@ -42,7 +42,7 @@ module WebTools::Support::ServiceHelper
       end
 
       def system
-        @reflection ||= Ruby::Reflection.new
+        @reflection ||= MirrorAPI::Reflection.new
       end
     end
   end

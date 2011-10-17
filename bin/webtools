@@ -3,6 +3,17 @@ $LOAD_PATH.unshift(File.expand_path("../../lib", __FILE__))
 require 'rack'
 require 'web_tools'
 
+# HACK
+$LOAD_PATH.unshift("/home/tim/Devel/vmware/rubymirrors/lib/")
+if idx = ARGV.index("-t")
+  mirror_api = ARGV[idx + 1]
+else
+  mirror_api = RUBY_ENGINE
+end
+require "#{mirror_api.downcase}/reflection"
+MirrorAPI = Object.const_get(mirror_api.capitalize)
+# HACK END
+
 app = Rack::Builder.new do
   WebTools::UI.set :root, File.expand_path("../..", __FILE__)
   ui = WebTools::UI.new
