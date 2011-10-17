@@ -2,14 +2,13 @@ require 'web_tools'
 
 class WebTools::Debugger < WebTools::Tool
   before do
-    @entry = ObjectLog.to_ary.detect {|o| o.object_id == params["oop"].to_i }
-    @process = (@entry.continuation unless @entry.nil?)
+    @process = system.object_by_id(params["oop"].to_i)
   end
 
   get '/' do
     return {} unless @process
-    json("label" => @entry.label,
-         "stack" => @process.report)
+    json("label" => @process.name,
+         "stack" => str_report_for(@process))
   end
 
   get '/frame' do
@@ -25,20 +24,17 @@ class WebTools::Debugger < WebTools::Tool
     steplevel = params["level"].to_i
     stacksize = @process.stack.size
 
-    begin
-      if params["level"]
-        @process.step(steplevel)
-      else
-        Maglev::Debugger.debug_log_entry(@entry)
-      end
-    rescue Exception
+    if params["level"]
+      @process.step(steplevel)
+    else
+      @process.run
     end
 
-    data = { "label" => @entry.label,
+    data = { "label" => @process.name,
       "method" => method_data_from_frame(frame),
       "variables" => variables_data_from_frame(frame) }
     if @process.stack.size != stacksize
-      data["stack"] = @process.report
+      data["stack"] = str_report_for @process
     end
 
     json(data)
@@ -51,23 +47,22 @@ class WebTools::Debugger < WebTools::Tool
     frame.restart
     new_frame = @process.stack.first
 
-    json("label" => @entry.label,
-         "stack" => @process.report,
+    json("label" => @process.name,
+         "stack" => str_report_for(@process),
          "method" => method_data_from_frame(new_frame),
          "variables" => variables_data_from_frame(new_frame))
   end
 
   def method_data_from_frame(frame)
-    if frame.method.in_class.namespace
-      dict = frame.method.in_class.namespace.my_class.name
-    end
+    dict = frame.method.defining_class.nesting[1]
+    dict = dict ? dict.name : ""
     { "source" => frame.method.source,
       "stepPoints" => frame.method.step_offsets,
       "sends" => frame.method.send_offsets,
       "nowAt" => frame.step_offset,
       "dictionaryName" => dict || "",
-      "className" => frame.method.in_class.name,
-      "isMeta" => frame.method.in_class.singleton_class? }
+      "className" => frame.method.defining_class.name,
+      "isMeta" => frame.method.defining_class.singleton_class? }
   end
 
   def variables_data_from_frame(frame)
@@ -79,11 +74,22 @@ class WebTools::Debugger < WebTools::Tool
         "string" => frame.receiver.inspect,
         "oop" => frame.receiver.object_id }
     end
-    frame.args_and_temps.each do |k, v|
+    frame.arguments.each do |k, v|
+      list << { "name" => k.to_s,
+        "string" => v.inspect,
+        "oop" => v.object_id }
+    end
+    frame.locals.each do |k, v|
       list << { "name" => k.to_s,
         "string" => v.inspect,
         "oop" => v.object_id }
     end
     list
+  end
+
+  def str_report_for(process_mirror)
+    process_mirror.stack.collect do |f|
+      f.inspect.gsub /<|>/, ""
+    end
   end
 end
