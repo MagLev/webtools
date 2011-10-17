@@ -10,6 +10,9 @@ module WebTools::Support::ServiceHelper
 
     base.error do
       excep = request.env['sinatra.error']
+      puts
+      p excep.message
+      puts excep.backtrace
       json('_stack' => excep.backtrace.join("<br>"),
            '_error' => excep.message)
     end
@@ -35,11 +38,11 @@ module WebTools::Support::ServiceHelper
       end
 
       def reflect(obj)
-        system.reflect_object(obj)
+        system.reflect(obj)
       end
 
       def system
-        @reflection ||= Maglev::Reflection.new(nil)
+        @reflection ||= Ruby::Reflection.new
       end
     end
   end

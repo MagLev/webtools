@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'web_tools'
-require 'maglev/reflection'
-require 'maglev/debugger'
+require 'ruby/reflection'
+# require 'maglev/debugger'
 
 module WebTools
   class Workspace < Tool

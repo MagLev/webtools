@@ -1,4 +1,4 @@
-require 'maglev/objectlog'
+# require 'maglev/objectlog'
 
 module WebTools
   module Support

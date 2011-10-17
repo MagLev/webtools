@@ -1,5 +1,5 @@
 require 'web_tools'
-require 'maglev/debugger'
+# require 'maglev/debugger'
 
 class WebTools::Debugger < WebTools::Tool
   before do
