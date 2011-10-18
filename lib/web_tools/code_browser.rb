@@ -96,7 +96,7 @@ module WebTools
     def class_list
       @klass = reflect(Object).constant(params["klass"]).value if params["klass"]
       @klass = @klass.singleton_class if @klass && params["isMeta"]
-      @class_category.nested_classes.collect(&:name).sort
+      (@class_category.nested_classes + [@class_category]).collect(&:name).uniq.sort
     end
 
     def super_list
