@@ -253,16 +253,16 @@ GemStone.saveScript('scripts/editor.js', function(options) {
 		setCodeMode(source);
 		editor.setValue(source); 
 	}
-
+	
 	function setCodeMode(source) {
 		ruby_regex = /^\s*(def|do|begin|<a define)/
 		smalltalk_regex = /^[_a-zA-Z0-9]+:/
 		if (source.match(ruby_regex)) {
 			editor.setOption('mode', 'text/x-ruby');
 		} else if (source.match(smalltalk_regex)) {
-			editor.setOption('mode', "text/x-stsrc");
+			editor.setOption('mode', 'text/x-stsrc');
 		} else {
-			editor.setOption('mode', "text/x-stsrc");
+			editor.setOption('mode', 'text/x-stsrc');
 		}
 	}
 	

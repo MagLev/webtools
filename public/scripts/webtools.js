@@ -303,13 +303,13 @@ GemStone = function() {	//	hide everything inside an anonymous function to isola
 			$div.addClass('scrollingTable');
 		}
 	}
-
+	
 	function encodeHTML(string) {
 		return $('<div/>').text(string).html();
 	}
-
+	
 	function decodeHTML(string) {
-		return $('<div/>').html(string).text();
+		return $('</div/>').html(string).text();
 	}
 	
 	function resize() {

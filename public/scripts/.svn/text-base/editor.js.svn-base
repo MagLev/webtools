@@ -16,6 +16,7 @@ GemStone.saveScript('scripts/editor.js', function(options) {
 	GemStone.loadCSS('CodeMirror/css/default.css');
 	GemStone.loadCSS('css/editor.css');
 	GemStone.runJsOnce('CodeMirror/js/codemirror.js', function() {
+		GemStone.runJsOnce('CodeMirror/js/ruby.js', function() {});
 		GemStone.runJsOnce('CodeMirror/js/smalltalk.js', function() {
 			setupEditor(); 
 		}); 
@@ -231,7 +232,7 @@ GemStone.saveScript('scripts/editor.js', function(options) {
 		isMeta = data.isMeta;
 		category = data.category;
 		source = data.source ? data.source : '';
-		editor.setOption('mode', 'text/x-stsrc');
+		setCodeMode(source);
 		editor.setValue(source); 
 		calculateStepPoints(data);
 	}
@@ -249,8 +250,20 @@ GemStone.saveScript('scripts/editor.js', function(options) {
 		isMeta = null;
 		category = null;
 		source = aString;
-		editor.setOption('mode', 'text/x-stsrc');
+		setCodeMode(source);
 		editor.setValue(source); 
+	}
+	
+	function setCodeMode(source) {
+		ruby_regex = /^\s*(def|do|begin|<a define)/
+		smalltalk_regex = /^[_a-zA-Z0-9]+:/
+		if (source.match(ruby_regex)) {
+			editor.setOption('mode', 'text/x-ruby');
+		} else if (source.match(smalltalk_regex)) {
+			editor.setOption('mode', 'text/x-stsrc');
+		} else {
+			editor.setOption('mode', 'text/x-stsrc');
+		}
 	}
 	
 	function calculateStepPoints(data) {

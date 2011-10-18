@@ -226,7 +226,7 @@ GemStone.saveScript('scripts/Statistics.js', function() {
 	}
 
 	function gotStastic(data) {
-		console.log(data);
+//		console.log(data);
 		var name = data['statName']
 		,	id = name + data['processOop']
 		,	flotData = data['flotData']
