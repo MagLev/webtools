@@ -67,29 +67,31 @@ class WebTools::Debugger < WebTools::Tool
 
   def variables_data_from_frame(frame)
     list = [{ "name" => "self",
-              "string" => frame.self.inspect,
-              "oop" => frame.self.object_id }]
+              "string" => frame.self.name,
+              "oop" => frame.self.reflectee.object_id }]
     if frame.self != frame.receiver
       list << { "name" => "receiver",
-        "string" => frame.receiver.inspect,
-        "oop" => frame.receiver.object_id }
+        "string" => frame.receiver.name,
+        "oop" => frame.receiver.reflectee.object_id }
     end
     frame.arguments.each do |k, v|
       list << { "name" => k.to_s,
-        "string" => v.inspect,
-        "oop" => v.object_id }
+        "string" => v.name,
+        "oop" => v.reflectee.object_id }
     end
     frame.locals.each do |k, v|
       list << { "name" => k.to_s,
-        "string" => v.inspect,
-        "oop" => v.object_id }
+        "string" => v.name,
+        "oop" => v.reflectee.object_id }
     end
     list
   end
 
   def str_report_for(process_mirror)
     process_mirror.stack.collect do |f|
-      f.inspect.gsub /<|>/, ""
+      separator = f.method.defining_class.singleton_class? ? '.' : '#'
+      name = f.name || "block in #{f.selector}"
+      "#{f.method.defining_class}#{separator}#{name}"
     end
   end
 end
