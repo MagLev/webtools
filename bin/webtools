@@ -4,15 +4,14 @@ require 'rack'
 require 'web_tools'
 
 # HACK
-$LOAD_PATH.unshift("/home/tim/Devel/vmware/rubymirrors/lib/")
-if idx = ARGV.index("-t")
-  mirror_api = ARGV[idx + 1]
-else
-  mirror_api = RUBY_ENGINE
+ARGV.each do |arg|
+  ARGV.shift
+  mirror_api = ARGV.first if arg == "-t"
 end
+mirror_api ||= RUBY_ENGINE
 require "#{mirror_api.downcase}/reflection"
 MirrorAPI = Object.const_get(mirror_api.capitalize)
-# HACK END
+# HACK END ;)
 
 app = Rack::Builder.new do
   WebTools::UI.set :root, File.expand_path("../..", __FILE__)
