@@ -11,7 +11,7 @@ connected to GemStone/S.
 
 === Setup
 
-1.  $ rvm use [maglev-head|rbx|jruby|ruby-head]
+    $ rvm use [maglev-head|rbx|jruby|ruby-head]
     $ bundle install
 
     ### Temporary workaround on MagLev for https://github.com/MagLev/maglev/issues/58 ###
