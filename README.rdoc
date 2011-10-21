@@ -92,7 +92,7 @@ $MAGLEV_HOME/gemstone/examples/www. The Smalltalk example code can be
 invoked from ruby (a demonstration of how to invoke Smalltalk from Ruby),
 via:
 
-    $ rake smalltalk:run
+    $ rake smalltalk
 
 Then browse to http://localhost:8080/ and explore
 
