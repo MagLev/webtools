@@ -3,46 +3,40 @@ require 'web_tools'
 
 module WebTools
   class Workspace < Tool
-
     def self.description
       'Code workspace'
     end
 
-    # post '/deleteProcess' do
-    #   return {} unless params["oop"]
-    #   ObjectLog.delete(ObjectSpace._id2ref(params["oop"].to_i))
-    #   json({})
-    # end
+    post '/deleteProcess' do
+      return {} unless params["oop"]
+      Support::ErrorLog.delete(system.object_by_id(params["oop"].to_i))
+      json({})
+    end
 
     post '/evaluate' do
-      eval_thread = Thread.new do
-        begin
-          value = eval(params["text"])
-          result = { "klass" => value.class.inspect,
-            "string" => value.inspect }
-          if value.is_a? Module
-            result["dict"] = ""
-            result["name"] = value.inspect
-            result["cat"]  = ""
-          end
-          return result
-        rescue SyntaxError => e
-          return { "errorType" => "compileError",
-            "errorDetails" => [[1031, 1, e.message, nil, nil]] }
-        rescue Exception => e
-          Thread.current[:error] = e
-          Thread.current[:copy] = reflect(Thread.current).copy_active_thread
-          return Thread.current
+      begin
+        value = eval(params["text"])
+        result = { "klass" => value.class.inspect,
+          "string" => value.inspect }
+        if value.is_a? Module
+          result["dict"] = ""
+          result["name"] = value.inspect
+          result["cat"]  = ""
         end
-      end
-      eval_thread.join
-      m = reflect(eval_thread)
-      if (rval = m.return_value) == eval_thread
-        json("errorType" => eval_thread[:error].class.inspect,
-             "description" => eval_thread[:error].message,
-             "oop" => eval_thread[:copy].object_id)
-      else
-        json(rval)
+        return json(result)
+      rescue SyntaxError => e
+        return json("errorType" => "compileError",
+                    "errorDetails" => [[1031, 1, e.message, nil, nil]])
+      rescue Exception => e
+        cont = nil
+        if callcc {|cc| cont = cc; :create } == :create
+          entry = Support::ErrorLog.add :continuation => cont, :exception => e
+          return json("errorType" => entry.exception.class.inspect,
+                      "description" => entry.exception.message,
+                      "oop" => entry.object_id)
+        else
+          Thread.stop
+        end
       end
     end
 

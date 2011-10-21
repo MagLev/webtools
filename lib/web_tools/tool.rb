@@ -1,6 +1,7 @@
 require 'web_tools'
 require 'sinatra/base'
 require 'web_tools/support/service_helper'
+require 'web_tools/support/error_log'
 
 module WebTools
   class Tool < Sinatra::Base

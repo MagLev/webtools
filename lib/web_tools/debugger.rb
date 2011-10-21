@@ -2,12 +2,13 @@ require 'web_tools'
 
 class WebTools::Debugger < WebTools::Tool
   before do
-    @process = system.object_by_id(params["oop"].to_i)
+    @entry = system.object_by_id(params["oop"].to_i).reflectee
+    @process = system.reflect(@entry.process) if @entry
   end
 
   get '/' do
-    return {} unless @process
-    json("label" => @process.name,
+    return {} unless @entry
+    json("label" => @entry.exception.message,
          "stack" => str_report_for(@process))
   end
 
