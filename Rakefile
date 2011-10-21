@@ -4,7 +4,7 @@ MH = ENV['MAGLEV_HOME']
 
 desc "Run the WebTools Sinatra App"
 task :run do
-  sh "#{MH}/bin/rackup -Ilib config.ru"
+  sh "#{MH}/bin/maglev-ruby bin/webtools"
 end
 
 desc "Commit an interesting example class, AValidPerson, to the repository"
