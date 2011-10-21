@@ -14,30 +14,33 @@ module WebTools
     end
 
     post '/evaluate' do
-      begin
-        value = eval(params["text"])
-        result = { "klass" => value.class.inspect,
-          "string" => value.inspect }
-        if value.is_a? Module
-          result["dict"] = ""
-          result["name"] = value.inspect
-          result["cat"]  = ""
-        end
-        return json(result)
-      rescue SyntaxError => e
-        return json("errorType" => "compileError",
-                    "errorDetails" => [[1031, 1, e.message, nil, nil]])
-      rescue Exception => e
-        cont = nil
-        if callcc {|cc| cont = cc; :create } == :create
-          entry = Support::ErrorLog.add :continuation => cont, :exception => e
-          return json("errorType" => entry.exception.class.inspect,
-                      "description" => entry.exception.message,
-                      "oop" => entry.object_id)
-        else
+      response = nil
+      client = Thread.start do
+        begin
+          value = eval(params["text"])
+          result = { "klass" => value.class.inspect,
+            "string" => value.inspect }
+          if value.is_a? Module
+            result["dict"] = ""
+            result["name"] = value.inspect
+            result["cat"]  = ""
+          end
+          response = json(result)
+        rescue SyntaxError => e
+          response = json("errorType" => "compileError",
+                          "errorDetails" => [[1031, 1, e.message, nil, nil]])
+        rescue Exception => e
+          entry = Support::ErrorLog.add :thread => Thread.current,
+                                        :exception => e
+          response = json("errorType" => entry.exception.class.inspect,
+                          "description" => entry.exception.message,
+                          "oop" => entry.object_id)
           Thread.stop
         end
       end
+
+      sleep 0.2 until client.stop?
+      response
     end
 
     post '/saveMethod' do

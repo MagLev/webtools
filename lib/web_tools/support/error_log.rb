@@ -6,22 +6,10 @@ module WebTools
       extend self
       extend Enumerable
 
-      class Entry
-        attr_reader :exception, :continuation
-
-        def initialize(e, c)
-          @exception = e
-          @continuation = c
-        end
-
-        def process
-          c = @continuation
-          @process ||= Thread.new { c.call(nil) }
-        end
-      end
+      Entry = Struct.new :exception, :thread
 
       def add(hash)
-        list << Entry.new(hash[:exception], hash[:continuation])
+        list << Entry.new(hash[:exception], hash[:thread])
         list.last
       end
 

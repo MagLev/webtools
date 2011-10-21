@@ -3,7 +3,7 @@ require 'web_tools'
 class WebTools::Debugger < WebTools::Tool
   before do
     @entry = system.object_by_id(params["oop"].to_i).reflectee
-    @process = system.reflect(@entry.process) if @entry
+    @process = reflect(@entry.thread) if @entry
   end
 
   get '/' do
@@ -29,12 +29,20 @@ class WebTools::Debugger < WebTools::Tool
       @process.step(steplevel)
     else
       @process.run
+      sleep 0.2 until @process.reflectee.stop?
+      unless @process.alive? # No exception, return result
+        # TODO
+        nil.pause
+      end
     end
+
+    new_stack = @process.stack
+    frame = new_stack.first
 
     data = { "label" => @process.name,
       "method" => method_data_from_frame(frame),
       "variables" => variables_data_from_frame(frame) }
-    if @process.stack.size != stacksize
+    if new_stack.size != stacksize # Stack changed, reload
       data["stack"] = str_report_for @process
     end
 
@@ -90,9 +98,12 @@ class WebTools::Debugger < WebTools::Tool
 
   def str_report_for(process_mirror)
     process_mirror.stack.collect do |f|
-      separator = f.method.defining_class.singleton_class? ? '.' : '#'
-      name = f.name || "block in #{f.selector}"
-      "#{f.method.defining_class}#{separator}#{name}"
+      str = ""
+      if f.method
+        separator = f.method.defining_class.singleton_class? ? '.' : '#'
+        str = "#{f.method.defining_class.name}#{separator}"
+      end
+      str += (f.name || "block in #{f.selector}")
     end
   end
 end
