@@ -10,8 +10,13 @@ ARGV.each do |arg|
   mirror_api = ARGV.first if arg == "-t"
 end
 mirror_api ||= RUBY_ENGINE
-require "#{mirror_api.downcase}/reflection"
-MirrorAPI = Object.const_get(mirror_api.capitalize)
+begin
+  require "#{mirror_api.downcase}/reflection"
+  MirrorAPI = Object.const_get(mirror_api.capitalize)
+rescue LoadError
+  require "ruby/reflection"
+  MirrorAPI = Ruby
+end
 # HACK END ;)
 
 app = Rack::Builder.new do
