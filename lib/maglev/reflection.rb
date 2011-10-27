@@ -350,8 +350,6 @@ class Module
   primitive '__compile_method_category_environment_id', 'compileMethod:category:environmentId:'
 end
 
-BreakpointNotification = __resolve_smalltalk_global(:BreakpointNotification)
-
 class GsNMethod
   primitive '__is_method_for_block', 'isMethodForBlock'
   primitive '__source_string_for_block', '_sourceStringForBlock'
