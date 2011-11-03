@@ -72,6 +72,9 @@ class WebTools::Debugger < WebTools::Tool
       "dictionaryName" => dict || "",
       "className" => frame.method.defining_class.name,
       "isMeta" => frame.method.defining_class.singleton_class? }
+  rescue Exception
+    return { "source" => "", "stepPoints" => "", "sends" => "", "nowAt" => 0,
+      "dictionaryName" => "", "className" => "", "isMeta" => "" }
   end
 
   def variables_data_from_frame(frame)
@@ -94,6 +97,8 @@ class WebTools::Debugger < WebTools::Tool
         "oop" => v.reflectee.object_id }
     end
     list
+  rescue Exception
+    return []
   end
 
   def str_report_for(process_mirror)
