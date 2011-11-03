@@ -27,7 +27,7 @@ module WebTools::Middleware
 
     def _call(env)
       @debugger.wrap_call(env) do
-        Maglev::Debugger.debug(production_mode) { @app.call(env) }
+        Maglev::Debugger.debug { @app.call(env) }
       end
     end
 
