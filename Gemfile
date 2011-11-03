@@ -6,3 +6,8 @@ gemspec :development_group => :dev
 
 gem "rake"
 gem "rubymirrors", :git => "https://github.com/timfel/rubymirrors.git"
+
+platform :mri do
+  gem "method_source"
+  gem "ruby_parser"
+end
