@@ -39,37 +39,24 @@ module WebTools
       end
     end
 
-    if defined? Maglev
-      require 'maglev/debugger'
-      # Run block under the maglev debugger, that saves a continuation
-      # to the object log
-      def debug_on_exception(&block)
-        Maglev::Debugger.debug(&block)
-      rescue Exception => e
-        json("errorType" => e.class.inspect,
-             "description" => e.message,
-             "oop" => e.log_entry.continuation.object_id)
-      end
-    else
-      # Run block in a separate thread, which gets suspended if an
-      # error occurs.
-      def debug_on_exception
-        response = nil
-        client = Thread.start do
-          begin
-            yield
-          rescue Exception => e
-            entry = Support::ErrorLog.add :thread => Thread.current,
-                                          :exception => e
-            response = json("errorType" => entry.exception.class.inspect,
-                            "description" => entry.exception.message,
-                            "oop" => entry.object_id)
-            Thread.stop
-          end
+    # Run block in a separate thread, which gets suspended if an
+    # error occurs.
+    def debug_on_exception
+      response = nil
+      client = Thread.start do
+        begin
+          yield
+        rescue Exception => e
+          entry = Support::ErrorLog.add :thread => Thread.current,
+          :exception => e
+          response = json("errorType" => entry.exception.class.inspect,
+                          "description" => entry.exception.message,
+                          "oop" => entry.object_id)
+          Thread.stop
         end
-        sleep 0.2 until client.stop?
-        response
       end
+      sleep 0.2 until client.stop?
+      response
     end
 
     def run_evaluation(text)
