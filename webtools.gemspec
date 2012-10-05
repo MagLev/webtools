@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 It is not part of the default dependencies, so the gem doesn't have to pull in too many dependencies for deployment installations (i.e. recording information about your production system for later analysis).
 "
 
-  s.add_dependency 'json_pure', '~> 1.5'
+  s.add_dependency 'json', '~> 1.7'
   s.add_dependency 'rack', '~> 1.1'
   s.add_dependency 'rack-contrib', '~> 1.1'
   s.add_development_dependency 'rack-test', '~> 0.6'
@@ -25,4 +25,5 @@ It is not part of the default dependencies, so the gem doesn't have to pull in t
   s.add_development_dependency 'activemodel', '~> 3.0'
   s.add_development_dependency 'mocha', '~> 0.9'
   s.add_development_dependency 'minitest', '~> 2.4'
+  s.add_development_dependency 'i18n', '~> 0.5'
 end
