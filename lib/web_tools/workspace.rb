@@ -21,7 +21,7 @@ module WebTools
     end
 
     post '/saveMethod' do
-      klass = reflect(Object).constant(params["klass"])
+      klass = reflect(Object).constant(params["klass"]).value
       source = params["source"]
       if params["isMeta"] == "true"
         unless source =~ /^\s*def\s+self\./
