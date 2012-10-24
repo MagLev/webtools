@@ -6,6 +6,7 @@ module WebTools::Support::ServiceHelper
     base.set :show_exceptions, false
     base.set :raise_errors, false
     base.set :method_override, true
+    base.set :logging, true
     base.use Rack::JSONP
 
     base.error do
