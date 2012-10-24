@@ -132,6 +132,7 @@ module WebTools
         "className" => @klass.name,
         "isMeta" => params["isMeta"],
         "category" => "",
+        "selector" => @selector,
         "source" => @method.source,
         "stepPoints" => @method.step_offsets,
         "sends" => @method.send_offsets }
