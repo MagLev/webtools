@@ -47,8 +47,7 @@ module WebTools
         begin
           response = yield
         rescue Exception => e
-          entry = Support::ErrorLog.add :thread => Thread.current,
-          :exception => e
+          entry = Support::ErrorLog.add :thread => Thread.current, :exception => e
           response = json("errorType" => entry.exception.class.inspect,
                           "description" => entry.exception.message,
                           "oop" => entry.object_id)
