@@ -45,7 +45,7 @@ module WebTools
       response = nil
       client = Thread.start do
         begin
-          yield
+          response = yield
         rescue Exception => e
           entry = Support::ErrorLog.add :thread => Thread.current,
           :exception => e
