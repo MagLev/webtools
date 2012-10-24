@@ -24,8 +24,8 @@ GemStone.saveScript('scripts/editor.js', function(options) {
 	return {
 		isOkayToChange: isOkayToChange
 	,	isModified: 	isModified
-	,	setCode:		setCode
-	,	setMethod:		setMethod
+	,	setCode:	setCode
+	,	setMethod:	setMethod
 	};
 
 	function setupEditor() {
@@ -166,6 +166,7 @@ GemStone.saveScript('scripts/editor.js', function(options) {
 		,	klass:		className
 		,	isMeta:		isMeta
 		,	category:	category
+		,	selector:	editor.selector
 		,	source: 	editor.getValue()
 		};
 		GemStone.ajax('POST','Workspace/saveMethod', myRequest, onSaveMethod);
@@ -231,6 +232,7 @@ GemStone.saveScript('scripts/editor.js', function(options) {
 		className = data.className;
 		isMeta = data.isMeta;
 		category = data.category;
+		editor.selector = data.selector;
 		source = data.source ? data.source : '';
 		setCodeMode(source);
 		editor.setValue(source); 
