@@ -3,10 +3,11 @@ require 'web_tools'
 require 'web_tools/support/service_helper'
 
 class WebTools::UI < Sinatra::Base
+  PUBLIC_FOLDER = File.expand_path("../../../public", __FILE__)
   include WebTools::Support::ServiceHelper
 
   helpers do
-    def static(file) File.read("#{settings.public}/#{file}.html") end
+    def static(file) File.read("#{PUBLIC_FOLDER}/#{file}.html") end
   end
 
   get '/' do
