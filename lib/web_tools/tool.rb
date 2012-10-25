@@ -22,6 +22,14 @@ module WebTools
         self.subclasses << subclass
       end
 
+      def dont_show!
+        @dont_show = true
+      end
+
+      def dont_show?
+        !!@dont_show
+      end
+
       def subclasses
         @subclasses ||= []
       end

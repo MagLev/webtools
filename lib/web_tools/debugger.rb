@@ -1,6 +1,8 @@
 require 'web_tools'
 
 class WebTools::Debugger < WebTools::Tool
+  dont_show!
+
   before do
     @entry = system.object_by_id(params["oop"].to_i).reflectee
     @process = reflect(@entry.thread) if @entry

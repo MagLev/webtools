@@ -15,7 +15,7 @@ class WebTools::UI < Sinatra::Base
   end
 
   get '/tools' do
-    json "tools" => (WebTools::Tool.subclasses.sort_by(&:name).collect do |cls|
+    json "tools" => (WebTools::Tool.subclasses.reject(&:dont_show?).sort_by(&:name).map do |cls|
       { "file" => cls.file_name,
         "name" => cls.display_name,
         "description" => cls.description }

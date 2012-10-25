@@ -3,6 +3,8 @@ require 'web_tools'
 require 'web_tools/support/service_helper'
 
 class WebTools::MethodList < WebTools::Tool
+  dont_show!
+
   def self.description
     super
   end
