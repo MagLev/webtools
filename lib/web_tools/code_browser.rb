@@ -76,17 +76,24 @@ module WebTools
     end
 
     def class_cat_list
-      names = []
       filter = (@dict || @package || reflect(Object))
-      filter.nested_classes do |klass|
+      names = []
+      class_cat_list_for(filter, names)
+      @class_category ||= filter
+      names.sort
+    end
+
+    def class_cat_list_for(klassmirror, ary)
+      klassmirror.nested_classes.each do |klass|
         path = klass.name.gsub("::", "-")
-        names << path
-        if @class_category.nil? && params['classCat'] == path
-          @class_category = klass
+        unless ary.include? path
+          ary << path
+          if @class_category.nil? && params['classCat'] == path
+            @class_category = klass
+          end
+          class_cat_list_for(klass, ary)
         end
       end
-      @class_category ||= filter
-      names.compact.uniq.sort
     end
 
     # Returns a sorted list of class and module names in the Ruby Namespace
