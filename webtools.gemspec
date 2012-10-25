@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name         = 'maglev-webtools'
-  s.version      = '0.2.1'
+  s.version      = '1.0'
   s.date         = Date.today.to_s
   s.summary      = "The MagLev WebTools suite"
   s.description  = "A suite of tools for inspecting, interfacing and working with MagLev. It consists of a number of Rack middlewares to record runtime information in the stone, an associated set of Sinatra middlewares for exposing said information through a JSON interface, and a number of Sinatra web-applications that take advantage of that interface to build a few simple browser-based development tools."
@@ -20,6 +20,7 @@ It is not part of the default dependencies, so the gem doesn't have to pull in t
   s.add_dependency 'json_pure', '~> 1.5'
   s.add_dependency 'rack', '~> 1.1'
   s.add_dependency 'rack-contrib', '~> 1.1'
+  s.add_dependency 'rubymirrors', '~> 0.0.2'
   s.add_development_dependency 'sinatra', '~> 1.2.0'
   s.add_development_dependency 'activemodel', '~> 3.0'
   s.add_development_dependency 'mocha', '~> 0.9'
