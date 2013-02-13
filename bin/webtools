@@ -9,6 +9,7 @@ ARGV.each do |arg|
   ARGV.shift
   mirror_api = ARGV.first if arg == "-t"
 end
+RUBY_ENGINE = 'ruby' unless defined? RUBY_ENGINE
 mirror_api ||= RUBY_ENGINE
 begin
   require "#{mirror_api.downcase}/reflection"
